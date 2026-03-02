@@ -8,8 +8,13 @@ set(FLAGS   -Wall -Werror -Wpedantic -Wextra)
 
 add_executable(${PROJECT_NAME}  main.cpp)
 
+add_subdirectory(Core/Mesh)
+add_subdirectory(Core/Tests)
+
+target_link_libraries(${PROJECT_NAME}   PRIVATE     Mesh)
+
 target_compile_options(${PROJECT_NAME}  PRIVATE ${FLAGS}
                                                 $<$<CONFIG:DEBUG>:-Og -g>
                                                 $<$<CONFIG:RELEASE>:-O3>)
-                                                
+
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON)
