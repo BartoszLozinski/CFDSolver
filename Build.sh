@@ -7,7 +7,6 @@ if [[ "$CONFIG" != "Debug" && "$CONFIG" != "Release" ]]; then
     exit 1
 fi
 
-# create base build directory and config-specific subdir
 if [ ! -d build ]; then
     mkdir build
 fi
