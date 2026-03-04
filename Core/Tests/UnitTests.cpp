@@ -1,5 +1,6 @@
 #include "MeshTests.hpp"
 #include "FieldTests.hpp"
+#include "BoundaryConditionTests.hpp"
 
 int main(int argc, char** argv)
 {

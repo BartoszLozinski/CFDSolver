@@ -16,9 +16,12 @@ TEST(FieldTest, ConstructorInitializesSizes)
     StructuredMesh mesh(4, 3, 1.0, 1.0);
     Mesh::Field<int> field(mesh);
 
-    ASSERT_EQ(field.Nx(), mesh.Nx());
-    ASSERT_EQ(field.Ny(), mesh.Ny());
-    ASSERT_EQ(field.Size(), mesh.NumberOfCells());
+    // Total size includes ghost cells (+2 in each direction)
+    ASSERT_EQ(field.Nx(), 6);
+    ASSERT_EQ(field.Ny(), 5);
+    ASSERT_EQ(field.InteriorNx(), 4);
+    ASSERT_EQ(field.InteriorNy(), 3);
+    ASSERT_EQ(field.Size(), 6 * 5);
 }
 
 TEST(FieldTest, AccessByCellId)
@@ -44,20 +47,22 @@ TEST(FieldTest, AccessByIndices)
     StructuredMesh mesh{ nx, ny, 1.0, 1.0 };
     Mesh::Field<int> field{ mesh };
 
-    for (std::size_t j = 0; j < ny; ++j)
+    // Iterate over interior cells (excluding ghost cells)
+    for (std::size_t j = 1; j <= field.InteriorNy(); ++j)
     {
-        for (std::size_t i = 0; i < nx; ++i)
+        for (std::size_t i = 1; i <= field.InteriorNx(); ++i)
         {
-            const auto id = mesh.CellId(i, j);
+            const auto id = i + j * field.Nx();
             field(i, j) = static_cast<int>(id + 10);
         }
     }
 
-    for (std::size_t j = 0; j < ny; ++j)
+    // Verify interior cells
+    for (std::size_t j = 1; j <= field.InteriorNy(); ++j)
     {
-        for (std::size_t i = 0; i < nx; ++i)
+        for (std::size_t i = 1; i <= field.InteriorNx(); ++i)
         {
-            const auto id = mesh.CellId(i, j);
+            const auto id = i + j * field.Nx();
             ASSERT_EQ(field(i, j), field[id]);
             ASSERT_EQ(field(i, j), static_cast<int>(id + 10));
         }
@@ -79,7 +84,7 @@ TEST(FieldTest, WorksWithComplexType)
     {
         for (std::size_t i = 0; i < vel.Nx(); ++i)
         {
-            const auto id = mesh.CellId(i, j);
+            const auto id = i + j * vel.Nx();
             ASSERT_DOUBLE_EQ(vel(i, j).u, vel[id].u);
             ASSERT_DOUBLE_EQ(vel(i, j).v, vel[id].v);
         }
