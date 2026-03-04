@@ -1,4 +1,5 @@
 #include "MeshTests.hpp"
+#include "FieldTests.hpp"
 
 int main(int argc, char** argv)
 {

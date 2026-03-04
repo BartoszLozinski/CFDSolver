@@ -25,7 +25,7 @@ namespace Mesh
     std::size_t StructuredMesh::NumberOfCells() const noexcept { return nx * ny; }
     double StructuredMesh::CellVolume() const noexcept { return dx * dy; }
 
-    //i - cell index in x direction; j - cell index in y direction
+    //i - cell index in x direction (column index); j - cell index in y direction (row index)
     std::size_t StructuredMesh::CellId(const std::size_t i, const std::size_t j) const noexcept
     {
         return i + j * nx;

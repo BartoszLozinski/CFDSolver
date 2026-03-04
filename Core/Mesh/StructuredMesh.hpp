@@ -5,7 +5,7 @@
 
 namespace Mesh
 {
-    // i - increases in x (right) direction; j - increases in y (down) direction
+    // i - increases in x (right) direction (column index); j - increases in y (down) direction (row index)
     enum class Direction
     {
         Left,

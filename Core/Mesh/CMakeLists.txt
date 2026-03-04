@@ -1,7 +1,8 @@
 set(target_name Mesh)
 
-set(${target_name}_src    StructuredMesh.cpp)
-set(${target_name}_hpp    StructuredMesh.hpp)
+set(${target_name}_src      StructuredMesh.cpp)
+set(${target_name}_hpp      StructuredMesh.hpp
+                            Field.hpp)
 
 add_library(${target_name} STATIC)
 
