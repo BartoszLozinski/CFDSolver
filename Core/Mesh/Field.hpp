@@ -1,79 +1,12 @@
 #pragma once
 
+#include <cassert>
 #include <vector>
+
 #include "StructuredMesh.hpp"
 
 namespace Mesh
 {
-    /*
-    struct Velocity
-    {
-        double u{};
-        double v{};
-
-        Velocity() = default;
-        Velocity(const double u_, const double v_) : u(u_), v(v_) {}
-        Velocity(const Velocity& other) : u(other.u), v(other.v) {}
-        Velocity(Velocity&& other) noexcept : u(other.u), v(other.v) {}
-        ~Velocity() = default;
-
-        Velocity operator=(const Velocity& other) 
-        {
-            u = other.u;
-            v = other.v;
-            return *this;
-        }
-
-        Velocity operator=(Velocity&& other) noexcept
-        {
-            u = other.u;
-            v = other.v;
-            return *this;
-        }
-
-        Velocity operator*(const double scalar) const
-        {
-            return Velocity(u * scalar, v * scalar);
-        }
-
-        Velocity operator*(const int scalar) const
-        {
-            return Velocity(u * scalar, v * scalar);
-        }
-
-        Velocity operator/(const double scalar) const
-        {
-            return Velocity(u / scalar, v / scalar);
-        }
-
-        Velocity operator/(const int scalar) const
-        {
-            return Velocity(u / scalar, v / scalar);
-        }
-
-        Velocity operator+(const Velocity& other) const
-        {
-            return Velocity(u + other.u, v + other.v);
-        }
-
-        Velocity operator-(const Velocity& other) const
-        {
-            return Velocity(u - other.u, v - other.v);
-        }
-
-        bool operator==(const Velocity& other) const
-        {
-            return u == other.u && v == other.v;
-        }
-
-        bool operator!=(const Velocity& other) const
-        {
-            return !(*this == other);
-        }
-
-
-    };*/
-
     template<typename T>
     class Field
     {

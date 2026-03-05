@@ -4,7 +4,7 @@
 #include <type_traits>
 #include "../Mesh/Field.hpp"
 #include "../Mesh/StructuredMesh.hpp"
-#include "../FVM/BasicOperations.hpp"
+#include "../FVM/VectorNt.hpp"
 
 static_assert(!std::is_default_constructible_v<Mesh::Field<int>>, "Field should not be default-constructible");
 static_assert(!std::is_convertible_v<Mesh::StructuredMesh, Mesh::Field<int>>, "Field constructor should be explicit");
@@ -47,7 +47,6 @@ TEST(FieldTest, AccessByIndices)
     StructuredMesh mesh{ nx, ny, 1.0, 1.0 };
     Mesh::Field<int> field{ mesh };
 
-    // Iterate over interior cells (excluding ghost cells)
     for (std::size_t j = 1; j <= field.InteriorNy(); ++j)
     {
         for (std::size_t i = 1; i <= field.InteriorNx(); ++i)
@@ -57,7 +56,6 @@ TEST(FieldTest, AccessByIndices)
         }
     }
 
-    // Verify interior cells
     for (std::size_t j = 1; j <= field.InteriorNy(); ++j)
     {
         for (std::size_t i = 1; i <= field.InteriorNx(); ++i)

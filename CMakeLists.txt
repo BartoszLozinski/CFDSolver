@@ -10,6 +10,7 @@ add_executable(${PROJECT_NAME}  main.cpp)
 
 add_subdirectory(Core/Mesh)
 add_subdirectory(Core/Tests)
+add_subdirectory(Core/FVM)
 
 target_link_libraries(${PROJECT_NAME}   PRIVATE     Mesh)
 

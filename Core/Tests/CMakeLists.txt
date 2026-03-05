@@ -8,6 +8,7 @@ set(GMOCK_LIBRARIES /usr/lib/libgmock.a /usr/lib/libgmock_main.a)
 add_executable(${target_name} ${${target_name}_src})
 
 target_link_libraries(${target_name}   PRIVATE      Mesh
+                                                    FVM
                                                     ${GTEST_LIBRARIES}
                                                     ${GMOCK_LIBRARIES})
 

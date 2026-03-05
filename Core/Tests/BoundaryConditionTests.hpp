@@ -7,7 +7,7 @@
 #include "../Boundary/Direchlet.hpp"
 #include "../Boundary/Neuman.hpp"
 
-#include "../FVM/BasicOperations.hpp"
+#include "../FVM/VectorNt.hpp"
 
 using Mesh::StructuredMesh;
 using Mesh::Field;
