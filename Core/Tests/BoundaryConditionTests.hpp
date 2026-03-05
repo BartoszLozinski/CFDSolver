@@ -7,7 +7,7 @@
 #include "../Boundary/Direchlet.hpp"
 #include "../Boundary/Neuman.hpp"
 
-#include "../Math/BasicOperations.hpp"
+#include "../FVM/BasicOperations.hpp"
 
 using Mesh::StructuredMesh;
 using Mesh::Field;
@@ -24,7 +24,6 @@ TEST(DirichletBCTest, FixedValueLeftSide)
     StructuredMesh mesh(4, 3, 1.0, 1.0);
     Field<double> field(mesh);
 
-    // Initialize interior cells
     for (std::size_t j = 1; j <= field.InteriorNy(); ++j)
     {
         for (std::size_t i = 1; i <= field.InteriorNx(); ++i)
@@ -33,11 +32,9 @@ TEST(DirichletBCTest, FixedValueLeftSide)
         }
     }
 
-    // Apply Dirichlet BC on left side with value = 10.0
     FixedValue<double> bc_left(Side::Left, 10.0);
     bc_left.Apply(field);
 
-    // Verify: ghost cell = 2 * value - interior_cell
     for (std::size_t j = 1; j < field.InteriorNy(); ++j)
     {
         const double expected = 2 * 10.0 - field(1, j);
@@ -120,7 +117,6 @@ TEST(DirichletBCTest, FixedValueWithVelocity)
     StructuredMesh mesh(3, 3, 1.0, 1.0);
     Field<Vector2d> field(mesh);
 
-    // Initialize interior cells
     for (std::size_t j = 1; j <= field.InteriorNy(); ++j)
     {
         for (std::size_t i = 1; i <= field.InteriorNx(); ++i)
@@ -164,7 +160,6 @@ TEST(NeumannBCTest, FixedGradientLeftSide)
     FixedGradient<double> bc_left(Side::Left, gradient, dx, dy);
     bc_left.Apply(field);
 
-    // Verify: ghost = interior - gradient * dx
     for (std::size_t j = 1; j < field.InteriorNy(); ++j)
     {
         const double expected = field(1, j) - gradient * dx;
@@ -191,7 +186,6 @@ TEST(NeumannBCTest, FixedGradientRightSide)
     FixedGradient<double> bc_right(Side::Right, gradient, dx, dy);
     bc_right.Apply(field);
 
-    // Verify: ghost = interior + gradient * dx
     for (std::size_t j = 1; j < field.InteriorNy(); ++j)
     {
         const std::size_t nx = field.Nx();
@@ -219,7 +213,6 @@ TEST(NeumannBCTest, FixedGradientTopSide)
     FixedGradient<double> bc_top(Side::Top, gradient, dx, dy);
     bc_top.Apply(field);
 
-    // Verify: ghost = interior - gradient * dy
     for (std::size_t i = 1; i < field.InteriorNx(); ++i)
     {
         const double expected = field(i, 1) - gradient * dy;
@@ -246,7 +239,6 @@ TEST(NeumannBCTest, FixedGradientBottomSide)
     FixedGradient<double> bc_bottom(Side::Bottom, gradient, dx, dy);
     bc_bottom.Apply(field);
 
-    // Verify: ghost = interior + gradient * dy
     for (std::size_t i = 1; i < field.InteriorNx(); ++i)
     {
         const std::size_t ny = field.Ny();
@@ -297,7 +289,6 @@ TEST(NeumannBCTest, ZeroGradient)
         }
     }
 
-    // Zero gradient should copy boundary value from interior
     FixedGradient<double> bc_left(Side::Left, 0.0, dx, dy);
     bc_left.Apply(field);
 
@@ -353,7 +344,6 @@ TEST(BoundaryConditionTest, LargeGrid)
     FixedValue<double> bc(Side::Left, 100.0);
     bc.Apply(field);
 
-    // Verify all left ghost cells
     for (std::size_t j = 1; j < field.InteriorNy(); ++j)
     {
         const double expected = 2 * 100.0 - field(1, j);

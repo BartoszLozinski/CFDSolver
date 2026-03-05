@@ -1,8 +1,7 @@
 #pragma once
 
 #include "gtest/gtest.h"
-#include <cmath>
-#include "../Math/BasicOperations.hpp"
+#include "../FVM/BasicOperations.hpp"
 
 // ============================================================================
 // Vector2d Construction Tests

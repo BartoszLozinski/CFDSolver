@@ -16,9 +16,6 @@ struct VectorNt : public std::array<T, N>
         return result;
     }
 
-    // note: scalar * vector is a free function below
-
-
     VectorNt operator/(const double scalar) const
     {
         VectorNt result{};
@@ -85,8 +82,6 @@ struct VectorNt : public std::array<T, N>
         return (*this)[0] * other[1] - (*this)[1] * other[0];
     }
 };
-
-// free-function for scalar * vector (commutative multiplication)
 
 template<typename T, std::size_t N, typename Scalar>
 VectorNt<T, N> operator*(const Scalar scalar, const VectorNt<T, N>& vec)

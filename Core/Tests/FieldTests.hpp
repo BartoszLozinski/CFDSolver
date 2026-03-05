@@ -4,9 +4,8 @@
 #include <type_traits>
 #include "../Mesh/Field.hpp"
 #include "../Mesh/StructuredMesh.hpp"
-#include "../Math/BasicOperations.hpp"
+#include "../FVM/BasicOperations.hpp"
 
-// Compile-time checks
 static_assert(!std::is_default_constructible_v<Mesh::Field<int>>, "Field should not be default-constructible");
 static_assert(!std::is_convertible_v<Mesh::StructuredMesh, Mesh::Field<int>>, "Field constructor should be explicit");
 

@@ -32,8 +32,6 @@ TEST(ValidMeshTest, ConstructorCreatesValidMesh)
     ASSERT_NEAR(mesh.CellVolume(), 0.01, 1e-6);
 }
 
-// Additional tests covering StructuredMesh member functions
-
 using Mesh::StructuredMesh;
 using Mesh::Direction;
 
@@ -59,7 +57,6 @@ TEST(StructuredMeshExtraTest, HasNeighborAndNeighborIdLogic)
 {
     StructuredMesh mesh(3, 3, 3.0, 3.0);
 
-    // center cell (1,1) should have all neighbors
     ASSERT_TRUE(mesh.HasNeighbor(1, 1, Direction::Left));
     ASSERT_TRUE(mesh.HasNeighbor(1, 1, Direction::Right));
     ASSERT_TRUE(mesh.HasNeighbor(1, 1, Direction::Top));
@@ -70,7 +67,6 @@ TEST(StructuredMeshExtraTest, HasNeighborAndNeighborIdLogic)
     ASSERT_EQ(mesh.NeighborId(1, 1, Direction::Top), mesh.CellId(1, 0));
     ASSERT_EQ(mesh.NeighborId(1, 1, Direction::Bottom), mesh.CellId(1, 2));
 
-    // corner cell (0,0) is top-left: no Left, no Top
     ASSERT_FALSE(mesh.HasNeighbor(0, 0, Direction::Left));
     ASSERT_FALSE(mesh.HasNeighbor(0, 0, Direction::Top));
     ASSERT_TRUE(mesh.HasNeighbor(0, 0, Direction::Right));
