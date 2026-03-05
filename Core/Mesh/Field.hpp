@@ -5,6 +5,7 @@
 
 namespace Mesh
 {
+    /*
     struct Velocity
     {
         double u{};
@@ -71,7 +72,7 @@ namespace Mesh
         }
 
 
-    };
+    };*/
 
     template<typename T>
     class Field

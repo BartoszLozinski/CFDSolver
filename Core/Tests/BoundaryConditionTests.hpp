@@ -7,9 +7,10 @@
 #include "../Boundary/Direchlet.hpp"
 #include "../Boundary/Neuman.hpp"
 
+#include "../Math/BasicOperations.hpp"
+
 using Mesh::StructuredMesh;
 using Mesh::Field;
-using Mesh::Velocity;
 using Boundary::Side;
 using Boundary::Direchlet::FixedValue;
 using Boundary::Neumann::FixedGradient;
@@ -117,26 +118,26 @@ TEST(DirichletBCTest, FixedValueBottomSide)
 TEST(DirichletBCTest, FixedValueWithVelocity)
 {
     StructuredMesh mesh(3, 3, 1.0, 1.0);
-    Field<Velocity> field(mesh);
+    Field<Vector2d> field(mesh);
 
     // Initialize interior cells
     for (std::size_t j = 1; j <= field.InteriorNy(); ++j)
     {
         for (std::size_t i = 1; i <= field.InteriorNx(); ++i)
         {
-            field(i, j).u = static_cast<double>(i);
-            field(i, j).v = static_cast<double>(j);
+            field(i, j)[0] = static_cast<double>(i);
+            field(i, j)[1] = static_cast<double>(j);
         }
     }
 
-    Velocity bc_value{2.0, 3.0};
-    FixedValue<Velocity> bc_left(Side::Left, bc_value);
+    Vector2d bc_value{2.0, 3.0};
+    FixedValue<Vector2d> bc_left(Side::Left, bc_value);
     bc_left.Apply(field);
 
     for (std::size_t j = 1; j < field.InteriorNy(); ++j)
     {
-        ASSERT_DOUBLE_EQ(field(0, j).u, 2 * 2.0 - field(1, j).u);
-        ASSERT_DOUBLE_EQ(field(0, j).v, 2 * 3.0 - field(1, j).v);
+        ASSERT_DOUBLE_EQ(field(0, j)[0], 2 * 2.0 - field(1, j)[0]);
+        ASSERT_DOUBLE_EQ(field(0, j)[1], 2 * 3.0 - field(1, j)[1]);
     }
 }
 
@@ -257,7 +258,7 @@ TEST(NeumannBCTest, FixedGradientBottomSide)
 TEST(NeumannBCTest, FixedGradientWithVelocity)
 {
     StructuredMesh mesh(3, 3, 1.0, 1.0);
-    Field<Velocity> field(mesh);
+    Field<Vector2d> field(mesh);
     const double dx = mesh.Dx();
     const double dy = mesh.Dy();
 
@@ -265,19 +266,19 @@ TEST(NeumannBCTest, FixedGradientWithVelocity)
     {
         for (std::size_t i = 1; i <= field.InteriorNx(); ++i)
         {
-            field(i, j).u = 10.0;
-            field(i, j).v = 20.0;
+            field(i, j)[0] = 10.0;
+            field(i, j)[1] = 20.0;
         }
     }
 
-    Velocity gradient_val{1.0, 2.0};
-    FixedGradient<Velocity> bc_left(Side::Left, gradient_val, dx, dy);
+    Vector2d gradient_val{1.0, 2.0};
+    FixedGradient<Vector2d> bc_left(Side::Left, gradient_val, dx, dy);
     bc_left.Apply(field);
 
     for (std::size_t j = 1; j < field.InteriorNy(); ++j)
     {
-        ASSERT_DOUBLE_EQ(field(0, j).u, field(1, j).u - gradient_val.u * dx);
-        ASSERT_DOUBLE_EQ(field(0, j).v, field(1, j).v - gradient_val.v * dx);
+        ASSERT_DOUBLE_EQ(field(0, j)[0], field(1, j)[0] - gradient_val[0] * dx);
+        ASSERT_DOUBLE_EQ(field(0, j)[1], field(1, j)[1] - gradient_val[1] * dx);
     }
 }
 

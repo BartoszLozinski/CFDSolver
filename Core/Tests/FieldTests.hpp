@@ -4,6 +4,7 @@
 #include <type_traits>
 #include "../Mesh/Field.hpp"
 #include "../Mesh/StructuredMesh.hpp"
+#include "../Math/BasicOperations.hpp"
 
 // Compile-time checks
 static_assert(!std::is_default_constructible_v<Mesh::Field<int>>, "Field should not be default-constructible");
@@ -72,12 +73,12 @@ TEST(FieldTest, AccessByIndices)
 TEST(FieldTest, WorksWithComplexType)
 {
     StructuredMesh mesh(3, 3, 1.0, 1.0);
-    Mesh::Field<Mesh::Velocity> vel(mesh);
+    Mesh::Field<Vector2d> vel(mesh);
 
     for (std::size_t id = 0; id < vel.Size(); ++id)
     {
-        vel[id].u = static_cast<double>(id) * 0.5;
-        vel[id].v = static_cast<double>(id) * -0.25;
+        vel[id][0] = static_cast<double>(id) * 0.5;
+        vel[id][1] = static_cast<double>(id) * -0.25;
     }
 
     for (std::size_t j = 0; j < vel.Ny(); ++j)
@@ -85,8 +86,8 @@ TEST(FieldTest, WorksWithComplexType)
         for (std::size_t i = 0; i < vel.Nx(); ++i)
         {
             const auto id = i + j * vel.Nx();
-            ASSERT_DOUBLE_EQ(vel(i, j).u, vel[id].u);
-            ASSERT_DOUBLE_EQ(vel(i, j).v, vel[id].v);
+            ASSERT_DOUBLE_EQ(vel(i, j)[0], vel[id][0]);
+            ASSERT_DOUBLE_EQ(vel(i, j)[1], vel[id][1]);
         }
     }
 }
