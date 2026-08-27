@@ -18,13 +18,10 @@ def second_order_derivative_central_diff(y_i1, y_i, y_i_1, dx):
 # Discrete equation will look like:
 
 # to match equations orders
-# k * (y_i1 - 2 * y_i + y_i_1) / (dx ** 2) = rho * cp (y_i1 - y_i_1) / 2 dt      // * dx**2 * 2dt
-# k * 2 * dt * (y_i1 - 2 * y_i + y_i_1) = rho * cp * dx**2 * (y_i1 - y_i_1)
+# k * (y_i1 - 2 * y_i + y_i_1) / (dx ** 2) = rho * cp (y_i - y_i_1) / dt      // * dx**2 * 2dt
+# k * dt * (y_i1 - 2 * y_i + y_i_1) = rho * cp * dx**2 * (y_i - y_i_1)
 # y_i1 * a + y_i * b + y_i_1 * c = d
-# y_i1 * ((k * 2 * dt) / (rho * cp * dx**2) - 1) + y_i * ((-4 * k * dt) / (rho * cp * dx**2)) + y_i_1 * ((k * 2 * dt) / (rho * cp * dx**2) + 1) = 0
-# a = ((k * 2 * dt) / (rho * cp * dx**2) - 1)
-# b = ((-4 * k * dt) / (rho * cp * dx**2))
-# c = ((k * 2 * dt) / (rho * cp * dx**2) + 1)
+
 # d = 0 
 # Simplified:
 # y_i1 - 2 * y_i + y_i = 0
@@ -76,19 +73,19 @@ x_end = 1.0 # m
 T_0 = 1.0 # K
 T_end = 0.0 # K
 dx = 0.05 # m
-dt = 0.85 * dx**2 / 2 # s
+dt = 360# s
 
 x = np.linspace(x_0, x_end, int((x_end - x_0) / dx) + 1)
 
 # Implicit method
-y_i1_coeff = (thermal_conductivity * 2 * dt) / (density * specific_heat * dx**2) - 1
-y_i_coeff = (-4 * thermal_conductivity * dt) / (density * specific_heat * dx**2)
-y_i_1_coeff = (thermal_conductivity * 2 * dt) / (density * specific_heat * dx**2) + 1
+r = thermal_conductivity * dt / (density * specific_heat * dx**2)
+y_i1_coeff = -r
+y_i_coeff = 1 + 2 * r
+y_i_1_coeff = -r
 T = np.linspace(T_0, T_0, len(x))
 T[-1] = T_end
 T_inner = T[1: -1].copy()
 Array = generate_2nd_order_pde_matrix(y_i1_coeff, y_i_coeff, y_i_1_coeff, len(x) - 2)
-
 
 timesteps = 100
 
@@ -97,11 +94,12 @@ for timestep in range(timesteps):
     T_inner = np.linalg.solve(Array, RHS)
     T = np.concatenate([[T_0], T_inner, [T_end]])
 
-    if timestep % 10 == 1:
-        plt.plot(x, T)
+    if timestep % 10 == 0:
+        plt.plot(x, T, label = f"timestep: {timestep}")
         plt.xlabel("x [m]")
         plt.ylabel("T [K]")
         plt.title("Solution of steady state conduction")
+        plt.legend()
         plt.grid()
         plt.show()
 
