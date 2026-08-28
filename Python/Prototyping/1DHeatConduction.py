@@ -6,7 +6,7 @@ density * specific_heat * dT / dtime = thermal_conductivity * Laplacian(T) + Hea
 
 For now 1D equation - to be developed for 2D and better architecture
 Steady state - ok
-Transient - TODO
+Transient - - OK
 heat Source term - including convection - TODO
 """
 
