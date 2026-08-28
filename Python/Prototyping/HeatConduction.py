@@ -34,7 +34,7 @@ class MaterialProperties:
         self.specific_heat = specific_heat
 
 
-class ImplicitSolver():
+class ISolver():
     def __init__(self, material_properties, dx, dt, x_0, x_end, T_0, T_end):
         self.material_properties = material_properties
         self.dx = dx
@@ -43,6 +43,11 @@ class ImplicitSolver():
         self.T_end = T_end
         self.X = np.linspace(x_0, x_end, int((x_end - x_0) / dx) + 1)
 
+    def solve(self, timesteps, should_plot = False, plot_interval = 10):
+        pass
+
+
+class ImplicitSolver(ISolver):
     def generate_2nd_order_pde_matrix(self, a, b, c):
         # solves
         # y_i1 * a + y_i * b + y_i_1 * c
@@ -93,16 +98,49 @@ class ImplicitSolver():
             T_inner = np.linalg.solve(Array, RHS)
             T = np.concatenate([[T_0], T_inner, [T_end]])
 
-            #lets plot internally for now
+            # lets plot internally for now
             if should_plot and (timestep % plot_interval == 0):
                 plt.plot(self.X, T, label=f"timestep: {timestep}")
                 plt.xlabel("x [m]")
                 plt.ylabel("T [K]")
-                plt.title("Solution of steady state conduction")
+                plt.title("Solution of steady state conduction - Implicit solver")
                 plt.legend()
                 plt.grid()
                 plt.show()
 
+
+class ExplicitSolver(ISolver):
+    def solve(self, timesteps, should_plot = False, plot_interval = 10):
+        # y_tn+1_xi = r T_xi+1 + (1 - 2 * r) * T_xi + r * T_xi_-1
+        
+        r = self.material_properties.thermal_conductivity * self.dt / (self.material_properties.density * self.material_properties.specific_heat * self.dx**2)
+        y_i_plus1_coeff = r
+        y_i_coeff = 1 - 2 * r
+        y_i_minus1_coeff = r
+
+        # For now assume initial value equal to T_0
+        T = np.linspace(T_0, T_0, len(self.X))
+        T[-1] = T_end
+
+        for timestep in range(timesteps):
+            T_previous = T.copy()
+            T[0] = T_0
+            T[-1] = T_end
+
+            for i in range(len(self.X) - 2):
+                T[i + 1] = T_previous[i + 2] * y_i_plus1_coeff + T_previous[i + 1] * y_i_coeff + T_previous[i] * y_i_minus1_coeff
+
+            # lets plot internally for now
+            if should_plot and (timestep % plot_interval == 0):
+                plt.plot(self.X, T, label=f"timestep: {timestep}")
+                plt.xlabel("x [m]")
+                plt.ylabel("T [K]")
+                plt.title("Solution of steady state conduction - Explicit Solver")
+                plt.legend()
+                plt.grid()
+                plt.show()
+            
+            
 
 # Stainless steel
 material_properties = MaterialProperties(16.0, 7850, 500)
@@ -112,8 +150,10 @@ x_end = 1.0 # m
 T_0 = 1.0 # K
 T_end = 0.0 # K
 dx = 0.05 # m
-dt = 360# s
-timesteps = 100
+# dt = 360# s for implicit
+dt = 180 #s -  solver should check dt
+timesteps = 200
 
-solver = ImplicitSolver(material_properties, dx, dt, x_0, x_end, T_0, T_end)
-solver.solve(timesteps, True)
+#solver = ImplicitSolver(material_properties, dx, dt, x_0, x_end, T_0, T_end)
+solver = ExplicitSolver(material_properties, dx, dt, x_0, x_end, T_0, T_end)
+solver.solve(timesteps, True, 20)
