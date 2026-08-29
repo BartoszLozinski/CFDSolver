@@ -7,9 +7,9 @@ class BoundaryCondition:
         pass
 
 
-#right now only space dependend BC
-#pass slices of the mesh boudnary cells
-#TODO add time dependent
+# right now only space dependend BC
+# pass slices of the mesh boudnary cells
+# TODO add time dependent
 class Direchlet(BoundaryCondition):
     def set(self, space_step):
         for i in range(len(self.boundary_cells)):
@@ -21,7 +21,6 @@ class Neuman(BoundaryCondition):
         super().__init__(boundary_cells, function)
         self.aligned_cells = aligned_cells
 
-
     def set(self, space_step):
         for i in range(len(self.boundary_cells)):
-            self.boundary_cells[i] = self.function(space_step * i, self, self.aligned_cells[i])
+            self.boundary_cells[i] = self.function(space_step * i, self.aligned_cells[i])
