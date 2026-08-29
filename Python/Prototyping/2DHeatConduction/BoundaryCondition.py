@@ -23,4 +23,5 @@ class Neuman(BoundaryCondition):
 
     def set(self, space_step):
         for i in range(len(self.boundary_cells)):
-            self.boundary_cells[i] = self.function(space_step * i, self.aligned_cells[i])
+            self.boundary_cells[i] = self.function(space_step * i,
+                                                   self.aligned_cells[i])

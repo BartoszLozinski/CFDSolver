@@ -20,8 +20,3 @@ class Mesh():
         self.dy = mesh_generator.dy
         self.nx = mesh_generator.nx
         self.ny = mesh_generator.ny
-
-    def initialize(self, function):
-        for row in range(len(self.mesh[0, :])):
-            for column in range(len(self.mesh[:, 0])):
-                self.mesh[row][column] = function(row * self.dx, column * self.dy)

@@ -1,12 +1,20 @@
 import Mesh
 import BoundaryCondition as BC
+import Solver
 
 T_top = 373  # K
 T_bottom = 273  # K
 
-mesh_generator = Mesh.MeshGenerator(0.1, 0.1, 5, 5)
+mesh_generator = Mesh.MeshGenerator(0.1, 0.1, 10, 10)
 mesh = Mesh.Mesh(mesh_generator)
 
+# Stainless steel - unsed now
+material_properties = Solver.MaterialProperties(16.0, 7850, 500)
+
+solver = Solver.ExplicitSolver(material_properties=material_properties, dt=0.002)
+solver.solve(mesh, timesteps=1000, should_plot=True, plot_interval=100)
+
+"""
 bc_top = BC.Direchlet(mesh.mesh[0, :], lambda dx: T_top)
 bc_bottom = BC.Direchlet(mesh.mesh[-1, :], lambda dx: T_bottom)
 bc_left = BC.Neuman(mesh.mesh[:, 0], lambda dy, alignedCell: alignedCell, mesh.mesh[:, 1])
@@ -19,3 +27,4 @@ bc_left.set(mesh.dy)
 bc_right.set(mesh.dy)
 
 print("Finished {T_top}")
+"""
