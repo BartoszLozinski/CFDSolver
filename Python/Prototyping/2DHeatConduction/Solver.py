@@ -40,6 +40,17 @@ class ExplicitSolver():
         dx = mesh.dx
         dy = mesh.dy
         dt = self.dt
+        alfa = 1  # 1 is instead of providing material properties for simplicity
+        rx = alfa * dt / dx**2
+        ry = alfa * dt / dy**2
+
+        if (rx + ry) > 0.5:
+            print("rx + ry > 0.5. Timestep will be adjusted!")
+            self.dt = 0.9 * dx**2 * dy**2 / (2 * alfa * (dx**2 + dy**2))
+            dt = self.dt
+            rx = alfa * dt / dx**2
+            ry = alfa * dt / dy**2
+            print(f'dt is updated to dt = {self.dt} [s]')
 
         # plotting only
         x = np.linspace(0, (mesh.nx + 1) * mesh.dx, mesh.nx)
@@ -53,13 +64,13 @@ class ExplicitSolver():
             T.set_boundary_conditions(bc_top, bc_bottom, bc_left, bc_right)
             T_previous = T.copy()
 
-            for row in range(mesh.nx - 2):
+            for row in range(mesh.nx):
                 xi = row + 1  # internal row with ghost cell offset
-                for column in range(mesh.ny - 2):
+                for column in range(mesh.ny):
                     yi = column + 1  # internal column with ghost cell offset
                     T[xi, yi] = ((T_previous[xi + 1, yi] + T_previous[xi - 1, yi]) * dt / dx**2 +
                                  (T_previous[xi, yi + 1] + T_previous[xi, yi - 1]) * dt / dy**2 +
-                                 (T_previous[xi, yi] * (1 - 2 * dt / dx**2 - 2 * dt / dy**2)))
+                                 (T_previous[xi, yi] * (1 - 2 * rx - 2 * ry)))
 
             # lets plot internally for now
 
