@@ -17,13 +17,7 @@ class ExplicitSolver():
     # boundary conditions to fix 
     def solve(self, mesh, timesteps, should_plot = False, plot_interval = 10):
         # y_tn+1_xi = r T_xi+1 + (1 - 2 * r) * T_xi + r * T_xi_-1
-        
-        # to be updated
-        # r = self.material_properties.thermal_conductivity * self.dt / (self.material_properties.density * self.material_properties.specific_heat * self.dx**2)
-        # y_i_plus1_coeff = r
-        # y_i_coeff = 1 - 2 * r
-        # y_i_minus1_coeff = r
-
+        #      
         # For now assume initial value equal to T_0
         T_top = 373
         T_bottom = 273
@@ -40,7 +34,8 @@ class ExplicitSolver():
         dx = mesh.dx
         dy = mesh.dy
         dt = self.dt
-        alfa = 1  # 1 is instead of providing material properties for simplicity
+        alfa = self.material_properties.thermal_conductivity / (self.material_properties.density *
+                                                                self.material_properties.specific_heat)
         rx = alfa * dt / dx**2
         ry = alfa * dt / dy**2
 
@@ -53,12 +48,13 @@ class ExplicitSolver():
             print(f'dt is updated to dt = {self.dt} [s]')
 
         # plotting only
-        x = np.linspace(0, (mesh.nx + 1) * mesh.dx, mesh.nx)
-        y = np.linspace(0, (mesh.ny + 1) * mesh.dy, mesh.ny)
-        X, Y = np.meshgrid(x, y)
-        fig, ax = plot.subplots()
-        cbar = None
-        meshplot = None
+        if should_plot:
+            x = np.linspace(0, (mesh.nx + 1) * mesh.dx, mesh.nx)
+            y = np.linspace(0, (mesh.ny + 1) * mesh.dy, mesh.ny)
+            X, Y = np.meshgrid(x, y)
+            fig, ax = plot.subplots()
+            cbar = None
+            meshplot = None
 
         for timestep in range(timesteps):
             T.set_boundary_conditions(bc_top, bc_bottom, bc_left, bc_right)
@@ -68,12 +64,11 @@ class ExplicitSolver():
                 xi = row + 1  # internal row with ghost cell offset
                 for column in range(mesh.ny):
                     yi = column + 1  # internal column with ghost cell offset
-                    T[xi, yi] = ((T_previous[xi + 1, yi] + T_previous[xi - 1, yi]) * dt / dx**2 +
-                                 (T_previous[xi, yi + 1] + T_previous[xi, yi - 1]) * dt / dy**2 +
+                    T[xi, yi] = ((T_previous[xi + 1, yi] + T_previous[xi - 1, yi]) * rx +
+                                 (T_previous[xi, yi + 1] + T_previous[xi, yi - 1]) * ry +
                                  (T_previous[xi, yi] * (1 - 2 * rx - 2 * ry)))
 
             # lets plot internally for now
-
             if should_plot and (timestep % plot_interval == 0):
                 T2d_plot = T.field[1:-1, 1:-1]  # without ghost cells
                 T2d_plot = T2d_plot.T
