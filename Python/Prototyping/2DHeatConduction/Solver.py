@@ -47,6 +47,7 @@ class ExplicitSolver():
         X, Y = np.meshgrid(x, y)
         fig, ax = plot.subplots()
         cbar = None
+        meshplot = None
 
         for timestep in range(timesteps):
             T.set_boundary_conditions(bc_top, bc_bottom, bc_left, bc_right)
@@ -65,12 +66,18 @@ class ExplicitSolver():
             if should_plot and (timestep % plot_interval == 0):
                 T2d_plot = T.field[1:-1, 1:-1]  # without ghost cells
                 T2d_plot = T2d_plot.T
-                ax.clear()
-                contour = ax.contourf(X, Y, T2d_plot, levels=20, cmap="inferno", vmin=T_bottom, vmax=T_top)
+
+                if meshplot is None:
+                    meshplot = ax.pcolormesh(X, Y, T2d_plot, cmap="jet", shading="auto", vmin=T_bottom, vmax=T_top)
+                    cbar = fig.colorbar(meshplot, ax=ax, label="Temperature [K]")
+                else:
+                    meshplot.set_array(T2d_plot.ravel())
+                    meshplot.set_clim(T_bottom, T_top)
+                    meshplot.set_array(T2d_plot.ravel())
+
                 ax.set_xlabel("x [m]")
                 ax.set_ylabel("y [m]")
                 ax.set_title(f"2D Temperature Field at timestep {timestep}")
-                if cbar is None:
-                    cbar = fig.colorbar(contour, ax=ax, label="Temperature [K]")
+
                 fig.canvas.draw_idle()
                 plot.pause(0.001)
