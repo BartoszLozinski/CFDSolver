@@ -9,4 +9,6 @@ set(CORE_FLAGS  -Wall
                 -Wpedantic
                 -Werror)
 
-add_subdirectory(MeshGenerator)
+add_subdirectory(BoundaryCondition)
+add_subdirectory(Mesh)
+add_subdirectory(Solvers)

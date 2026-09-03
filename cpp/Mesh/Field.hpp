@@ -16,4 +16,5 @@ private:
 public:
     Field(const Mesh& mesh_);
     void Initialize(std::function<double(double, double)> initializeFunction);
+    void SetBoundaryConditions(); //TODO
 };
