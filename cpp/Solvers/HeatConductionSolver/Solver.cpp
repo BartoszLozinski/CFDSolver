@@ -56,11 +56,11 @@ namespace Solver
             std::cout << std::format("New timestep: {}\n", dt);            
         }
 
-        auto Tprevious = T;
+        auto Tprevious = T.grid;
 
         for (std::size_t timestep = 0; timestep < timeSteps; ++timestep)
         {
-            Tprevious = T;
+            Tprevious = T.grid;
             T.ApplyBoundaryCondition(bcTop, bcBottom, bcLeft, bcRight);
 
             static constexpr std::size_t ghostCellOffset = 1;
@@ -68,9 +68,9 @@ namespace Solver
             {
                 for (std::size_t yi = ghostCellOffset; yi < mesh.ny; ++yi)
                 {
-                    T.grid[xi][yi] = (Tprevious.grid[xi + 1][yi] + Tprevious.grid[xi - 1][yi]) * rx + 
-                                     (Tprevious.grid[xi][yi + 1] + Tprevious.grid[xi][yi - 1]) * ry + 
-                                     (Tprevious.grid[xi][yi] * (1.0 - 2.0 * (rx + ry)));
+                    T.grid[xi][yi] = (Tprevious[xi + 1][yi] + Tprevious[xi - 1][yi]) * rx + 
+                                     (Tprevious[xi][yi + 1] + Tprevious[xi][yi - 1]) * ry + 
+                                     (Tprevious[xi][yi] * (1.0 - 2.0 * (rx + ry)));
 
                     // todo export for visualization
                     // todo add time measurement

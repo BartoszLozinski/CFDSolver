@@ -1,15 +1,15 @@
 #include "Field.hpp"
 
 Field::Field(const Mesh& mesh_)
-    : mesh(&mesh_)
+    : mesh(mesh_)
 {
     static constexpr uint32_t ghostCellOffset = 2;
     static constexpr double defualtValue = 0.0;
 
-    grid.resize(mesh->nx + ghostCellOffset);
+    grid.resize(mesh.nx + ghostCellOffset);
 
     for (auto& row : grid)
-        row.resize(mesh->ny + ghostCellOffset, defualtValue);
+        row.resize(mesh.ny + ghostCellOffset, defualtValue);
 }
 
 void Field::Initialize(std::function<double(double, double)> initializeFunction)
@@ -18,7 +18,7 @@ void Field::Initialize(std::function<double(double, double)> initializeFunction)
     {
         for (std::size_t column_id = 0; column_id < grid.at(0).size(); ++ column_id)
         {
-            grid[row_id][column_id] = initializeFunction(row_id * mesh->dx, column_id * mesh->dy);
+            grid[row_id][column_id] = initializeFunction(row_id * mesh.dx, column_id * mesh.dy);
         }
     }
 }
@@ -28,10 +28,10 @@ void Field::ApplyBoundaryCondition( BoundaryCondition::BoundaryConditionBase& to
                                   , BoundaryCondition::BoundaryConditionBase& left
                                   , BoundaryCondition::BoundaryConditionBase& right)
 {
-    top.Apply(mesh->dx);
-    bottom.Apply(mesh->dx);
-    left.Apply(mesh->dy);
-    right.Apply(mesh->dy);
+    top.Apply(mesh.dx);
+    bottom.Apply(mesh.dx);
+    left.Apply(mesh.dy);
+    right.Apply(mesh.dy);
 }
 
 //check if appropriate for sure

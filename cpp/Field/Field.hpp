@@ -19,12 +19,13 @@ enum class BoundaryCellsDirection
 class Field
 {
 private:
-    const Mesh* mesh = nullptr;
+    const Mesh& mesh;
 
 public:
     Grid grid;
     
     Field(const Mesh& mesh_);
+
     void Initialize(std::function<double(double, double)> initializeFunction);
 
     BoundaryIndicies GetBoundaryCells(const BoundaryCellsDirection direction) const;
