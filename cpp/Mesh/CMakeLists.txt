@@ -1,10 +1,11 @@
 set(target_name Mesh)
 
 set(${target_name}_src  MeshGenerator.cpp
-                        Field.cpp)
+)
+
 set(${target_name}_hpp  Mesh.hpp
                         MeshGenerator.hpp
-                        Field.hpp)
+)
 
 add_library(${target_name}  STATIC)
 

@@ -3,7 +3,15 @@
 #include <functional>
 #include <vector>
 
-using Cells = std::vector<double>;
+struct CellID
+{
+    std::size_t row{};
+    std::size_t col{};
+};
+
+using Grid = std::vector<std::vector<double>>;
+using BoundaryIndicies = std::vector<CellID>;
+
 
 namespace BoundaryCondition
 {
@@ -11,10 +19,11 @@ namespace BoundaryCondition
     class BoundaryConditionBase
     {
     protected:
-        Cells& boundaryCells;
+        Grid& grid;
+        BoundaryIndicies boundaryIndicies;
         // for now assume that the function takes only space step for 1 direction
         // will be updated to cell position later
-        BoundaryConditionBase(Cells& boundaryCells_);
+        BoundaryConditionBase(Grid& grid_, BoundaryIndicies boundaryIndicies_);
 
     public:
         // for now for perfectly structured mesh. will be updated later

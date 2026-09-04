@@ -5,10 +5,10 @@ namespace BoundaryCondition
     class Direchlet : public BoundaryConditionBase
     {
     protected:
-        std::function<double(double)> function;
+        std::function<double(double, double)> function; //space dx, space dy, 
         
     public:
-        Direchlet(Cells& boundaryCells_, std::function<double(double)> function_);
+        Direchlet(Grid& grid_, BoundaryIndicies boundaryIndicies_, std::function<double(double, double)> function_);
         void Apply(const double spaceStep) final override;
     };
 };

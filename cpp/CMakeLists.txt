@@ -11,4 +11,5 @@ set(CORE_FLAGS  -Wall
 
 add_subdirectory(BoundaryCondition)
 add_subdirectory(Mesh)
+add_subdirectory(Field)
 add_subdirectory(Solvers)

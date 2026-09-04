@@ -2,8 +2,8 @@
 
 namespace BoundaryCondition
 {
-    BoundaryConditionBase::BoundaryConditionBase(Cells& boundaryCells_)
-        : boundaryCells(boundaryCells_)
+    BoundaryConditionBase::BoundaryConditionBase(Grid& grid_, BoundaryIndicies boundaryIndicies_)
+        : grid(grid_), boundaryIndicies(boundaryIndicies_)
     {};
 
 };

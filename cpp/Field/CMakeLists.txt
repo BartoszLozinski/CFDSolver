@@ -1,10 +1,7 @@
-set(target_name Solvers)
+set(target_name Field)
 
-set(${target_name}_src  Solver.cpp
-)
-
-set(${target_name}_hpp  Solver.hpp
-)
+set(${target_name}_src  Field.cpp)
+set(${target_name}_hpp  Field.hpp)
 
 add_library(${target_name}  STATIC)
 
@@ -12,9 +9,8 @@ cmake_path(GET CMAKE_CURRENT_SOURCE_DIR     PARENT_PATH     MESH_GENERATOR_PAREN
 
 target_link_libraries(${target_name}
     PRIVATE
-        Field
-        Mesh
         BoundaryCondition
+        Mesh
 )
 
 target_sources(${target_name}
