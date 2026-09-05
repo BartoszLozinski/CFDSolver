@@ -3,18 +3,21 @@
 #include "../../Field/Field.hpp"
 #include "../../BoundaryCondition/Direchlet.hpp"
 #include "../../BoundaryCondition/Neumann.hpp"
+#include "../../ResultsExporter/CSVExporter.hpp"
 
 #include <iostream>
 #include <format>
 
 namespace Solver
 {
-    ExplicitHeatConduction::ExplicitHeatConduction(const MaterialProperties& materialProperties_, const double dt_)
+    ExplicitHeatConduction::ExplicitHeatConduction(const MaterialProperties& materialProperties_, const double dt_, const bool shouldExportResults_, const uint32_t exportFrequency_)
         : materialProperties(materialProperties_)
         , dt(dt_)
+        , shouldExportResults(shouldExportResults_)
+        , exportFrequency(exportFrequency_)
     {};
 
-    void ExplicitHeatConduction::Solve(const Mesh& mesh, [[maybe_unused]] const uint32_t timeSteps)
+    void ExplicitHeatConduction::Solve(const Mesh& mesh, const uint32_t timeSteps)
     {
         const double T_top = 373.0; // [K]
         const double T_bottom = 273.0; // [K]
@@ -75,6 +78,13 @@ namespace Solver
                     // todo export for visualization
                     // todo add time measurement
                 }
+            }
+
+            if (shouldExportResults && timestep % exportFrequency == 0)
+            {
+                std::string filename = std::format("T_{}.csv", timestep);
+                CSVExporter exporter;
+                exporter.Export(filename, T.grid);
             }
         }
     }

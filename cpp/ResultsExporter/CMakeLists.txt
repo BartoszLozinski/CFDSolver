@@ -1,22 +1,14 @@
-set(target_name Solvers)
+set(target_name ResultsExporter)
 
-set(${target_name}_src  Solver.cpp
+set(${target_name}_src  CSVExporter.cpp
 )
 
-set(${target_name}_hpp  Solver.hpp
+set(${target_name}_hpp  CSVExporter.hpp
 )
 
 add_library(${target_name}  STATIC)
 
 cmake_path(GET CMAKE_CURRENT_SOURCE_DIR     PARENT_PATH     MESH_GENERATOR_PARENT_DIR)
-
-target_link_libraries(${target_name}
-    PRIVATE
-        Field
-        Mesh
-        BoundaryCondition
-        ResultExporter
-)
 
 target_sources(${target_name}
     PRIVATE

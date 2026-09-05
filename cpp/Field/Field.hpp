@@ -4,7 +4,6 @@
 #include <vector>
 #include <functional>
 
-// TODO move to separate library
 // TODO make Field class a templated when needed to calculate vectors
 // i.e velocity
 
