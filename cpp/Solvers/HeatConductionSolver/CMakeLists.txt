@@ -15,7 +15,7 @@ target_link_libraries(${target_name}
         Field
         Mesh
         BoundaryCondition
-        ResultExporter
+        ResultsExporter
 )
 
 target_sources(${target_name}

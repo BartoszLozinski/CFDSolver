@@ -82,7 +82,7 @@ namespace Solver
 
             if (shouldExportResults && timestep % exportFrequency == 0)
             {
-                std::string filename = std::format("T_{}.csv", timestep);
+                std::string filename = std::format("Results/T/{}.csv", timestep);
                 CSVExporter exporter;
                 exporter.Export(filename, T.grid);
             }

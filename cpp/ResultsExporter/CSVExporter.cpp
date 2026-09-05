@@ -1,5 +1,8 @@
 #include "CSVExporter.hpp"
 
+#include <filesystem>
+
+
 void CSVExporter::WriteRow(const std::vector<double>& row, std::ofstream& outputFile)
 {
     if (!outputFile.is_open())
@@ -18,7 +21,10 @@ void CSVExporter::WriteRow(const std::vector<double>& row, std::ofstream& output
 
 void CSVExporter::Export(std::string_view filename, const std::vector<std::vector<double>>& data)
 {
-    std::ofstream outputFile{ filename.data() };
+    std::filesystem::path path = filename.data();
+    std::filesystem::create_directories(path.parent_path());
+
+    std::ofstream outputFile{ path };
 
     if (!outputFile.is_open())
         throw std::runtime_error("Failed to open file for writing: " + std::string(filename.begin(), filename.end()));
