@@ -8,14 +8,10 @@ void CSVExporter::WriteRow(const std::vector<double>& row, std::ofstream& output
     if (!outputFile.is_open())
         throw std::runtime_error("File is not opened");
 
-    for (const auto& value : row)
+    for (std::size_t i = 0; i < row.size(); ++i)
     {
-        char separator = ',';
-
-        if (value == row.back())
-            separator = '\n';
-
-        outputFile << value << separator;
+        const char separator = (i + 1) != row.size() ? '\t' : '\n';
+        outputFile << row[i] << separator;
     }
 }
 

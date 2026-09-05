@@ -61,7 +61,7 @@ namespace Solver
 
         auto Tprevious = T.grid;
 
-        for (std::size_t timestep = 0; timestep < timeSteps; ++timestep)
+        for (std::size_t timestep = 0; timestep <= timeSteps; ++timestep)
         {
             Tprevious = T.grid;
             T.ApplyBoundaryCondition(bcTop, bcBottom, bcLeft, bcRight);
