@@ -67,9 +67,9 @@ namespace Solver
             T.ApplyBoundaryCondition(bcTop, bcBottom, bcLeft, bcRight);
 
             static constexpr std::size_t ghostCellOffset = 1;
-            for (std::size_t xi = ghostCellOffset; xi < mesh.nx; ++xi)
+            for (std::size_t xi = ghostCellOffset; xi <= mesh.nx; ++xi)
             {
-                for (std::size_t yi = ghostCellOffset; yi < mesh.ny; ++yi)
+                for (std::size_t yi = ghostCellOffset; yi <= mesh.ny; ++yi)
                 {
                     T.grid[xi][yi] = (Tprevious[xi + 1][yi] + Tprevious[xi - 1][yi]) * rx + 
                                      (Tprevious[xi][yi + 1] + Tprevious[xi][yi - 1]) * ry + 
