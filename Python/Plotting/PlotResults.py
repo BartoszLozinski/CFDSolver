@@ -1,27 +1,34 @@
 import numpy as np
 import matplotlib.pyplot as plot
+from pathlib import Path
 
-path = "Results/T/0.csv"
+results_dir = Path("Results/T")
+csv_files = sorted(results_dir.glob("*.csv"), key=lambda p: int(p.stem))
 
-data = []
+if not csv_files:
+    raise FileNotFoundError(f"No CSV files found in {results_dir}")
 
-with open(path, "r", encoding="utf-8") as f:
-    for line in f:
-        line = line.strip()
-        if not line:
-            continue
-        row = [float(x) for x in line.split()]
-        data.append(row)
+fig, ax = plot.subplots()
+fig.tight_layout()
 
-array_2d = np.array(data, dtype=float)
+image = None
 
+for file in csv_files:
+    data = np.loadtxt(file, dtype=float)
 
-plot.figure()
-plot.imshow(array_2d, cmap="jet", origin="upper", aspect="auto")
-plot.colorbar(label="Temperature [K]")
-plot.title("Temperature field")
-plot.xlabel("x")
-plot.ylabel("y")
-plot.show()
+    if image is None:
+        image = ax.imshow(data, cmap="jet", origin="upper", aspect="auto")
+        fig.colorbar(image, ax=ax, label="Temperature [K]")
+    else:
+        image.set_data(data)
 
-print(array_2d.shape)
+    ax.set_title(f"Temperature field at timestep {file.stem}")
+    ax.set_xlabel("x_id")
+    ax.set_ylabel("y_id")
+
+    fig.canvas.draw()
+    plot.pause(0.05)
+
+    print(f"Showing {file.name} - press any key to continue")
+    plot.waitforbuttonpress()
+
