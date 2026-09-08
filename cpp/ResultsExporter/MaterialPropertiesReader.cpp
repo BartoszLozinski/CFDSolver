@@ -18,14 +18,9 @@ std::array<double, 3> MaterialPropertiesReader::ReadFromSetupFile(const std::str
         throw std::runtime_error(std::format("Failed to open file for reading: {}", filename));
 
     std::string line{};
-    auto trim = [](std::string &s) {
-        s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) { return !std::isspace(ch); }));
-        s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) { return !std::isspace(ch); }).base(), s.end());
-    };
 
     while (std::getline(inputFile, line))
     {
-        trim(line);
         if (line.empty())
             continue;
         if (line.front() == '#') // comment
@@ -43,13 +38,8 @@ std::array<double, 3> MaterialPropertiesReader::ReadFromSetupFile(const std::str
         if (!(iss >> valueStr))
             continue;
 
-        trim(key);
-        trim(valueStr);
-
         if (auto commentPos = valueStr.find('#'); commentPos != std::string::npos)
             valueStr = valueStr.substr(0, commentPos);
-
-        trim(valueStr);
 
         try
         {
