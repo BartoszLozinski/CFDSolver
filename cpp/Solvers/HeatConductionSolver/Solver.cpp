@@ -19,6 +19,7 @@ namespace Solver
 
     void ExplicitHeatConduction::Solve(const Mesh& mesh, const uint32_t timeSteps)
     {
+        //TODO add boundary conditions to the setup file
         const double T_top = 373.0; // [K]
         const double T_bottom = 273.0; // [K]
 

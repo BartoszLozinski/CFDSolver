@@ -2,9 +2,11 @@
 
 #include <cstdint>
 #include "Mesh.hpp"
+#include "Properties/MeshProperties.hpp"
 
 class MeshGenerator
 {
 public:
     Mesh GenerateMesh(const double dx, const double dy, const uint32_t nx, const uint32_t ny) const;
+    Mesh GenerateMesh(const MeshProperties& meshProperties) const;
 };

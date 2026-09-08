@@ -1,6 +1,7 @@
 set(target_name Properties)
 
 set(${target_name}_hpp  MaterialProperties.hpp
+                        MeshProperties.hpp
 )
 
 add_library(${target_name} INTERFACE)
