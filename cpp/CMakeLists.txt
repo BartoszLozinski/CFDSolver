@@ -15,6 +15,7 @@ add_subdirectory(BoundaryCondition)
 add_subdirectory(Mesh)
 add_subdirectory(Field)
 add_subdirectory(Properties)
+add_subdirectory(PropertiesReader)
 add_subdirectory(Solvers)
 add_subdirectory(ResultsExporter)
 
@@ -22,7 +23,7 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE
         Mesh
         Solvers
-        ResultsExporter
+        PropertiesReader
 )
 
 target_compile_options(${PROJECT_NAME}

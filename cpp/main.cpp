@@ -1,7 +1,7 @@
 #include "Solvers/HeatConductionSolver/Solver.hpp"
 #include "Properties/MaterialProperties.hpp"
 #include "Mesh/MeshGenerator.hpp"
-#include "ResultsExporter/MaterialPropertiesReader.hpp"
+#include "PropertiesReader/MaterialPropertiesReader.hpp"
 
 #include <chrono>
 #include <iostream>

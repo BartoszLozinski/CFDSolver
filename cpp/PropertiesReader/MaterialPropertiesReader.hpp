@@ -12,5 +12,4 @@ class MaterialPropertiesReader
 {
 public:
     MaterialProperties ReadFromSetupFile(const std::string& filename = "Setup/MaterialProperties");
-
 };
