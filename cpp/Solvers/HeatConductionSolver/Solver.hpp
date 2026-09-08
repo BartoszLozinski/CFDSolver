@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MaterialProperties.hpp"
+#include "../../Properties/MaterialProperties.hpp"
 #include "../../Mesh/Mesh.hpp"
 
 namespace Solver

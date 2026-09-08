@@ -1,5 +1,5 @@
 #include "Solvers/HeatConductionSolver/Solver.hpp"
-#include "Solvers/HeatConductionSolver/MaterialProperties.hpp"
+#include "Properties/MaterialProperties.hpp"
 #include "Mesh/MeshGenerator.hpp"
 #include "ResultsExporter/MaterialPropertiesReader.hpp"
 
@@ -11,10 +11,8 @@ using Clock = std::chrono::steady_clock;
 
 int main()
 {
-    MaterialPropertiesReader materialPropertiesReader{};
-    const auto readValues = materialPropertiesReader.ReadFromSetupFile();
+    const auto materialProperties = MaterialPropertiesReader{}.ReadFromSetupFile();
 
-    const MaterialProperties materialProperties{ readValues.at(0), readValues.at(1), readValues.at(2) };
     const auto mesh = MeshGenerator{}.GenerateMesh(0.1, 0.1, 20, 20);
     static constexpr double dt = 100; // [s]
 

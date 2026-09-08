@@ -12,6 +12,11 @@ add_library(${target_name}  STATIC)
 
 cmake_path(GET CMAKE_CURRENT_SOURCE_DIR     PARENT_PATH     MESH_GENERATOR_PARENT_DIR)
 
+target_link_libraries(${target_name}
+    INTERFACE
+        Properties
+)
+
 target_sources(${target_name}
     PRIVATE
         ${${target_name}_src}

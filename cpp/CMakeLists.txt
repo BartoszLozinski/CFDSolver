@@ -14,6 +14,7 @@ add_executable(${PROJECT_NAME} main.cpp)
 add_subdirectory(BoundaryCondition)
 add_subdirectory(Mesh)
 add_subdirectory(Field)
+add_subdirectory(Properties)
 add_subdirectory(Solvers)
 add_subdirectory(ResultsExporter)
 

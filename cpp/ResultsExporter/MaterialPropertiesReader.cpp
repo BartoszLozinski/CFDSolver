@@ -4,12 +4,18 @@
 #include <filesystem>
 #include <format>
 #include <fstream>
+#include <map>
 #include <ranges>
 #include <stdexcept>
 #include <sstream>
 
-std::array<double, 3> MaterialPropertiesReader::ReadFromSetupFile(const std::string& filename /* = "Setup/MaterialProperties" */)
+MaterialProperties MaterialPropertiesReader::ReadFromSetupFile(const std::string& filename /* = "Setup/MaterialProperties" */)
 {
+    MaterialProperties output;
+    std::map<std::string, double&> propertiesMap = { {"thermalConductivity", output.thermalConductivity}
+                                                   , {"specificHeatCapacity", output.specificHeatCapacity}
+                                                   , {"density", output.density} };
+
     std::filesystem::path path = filename;
 
     std::ifstream inputFile{ path };
@@ -42,10 +48,8 @@ std::array<double, 3> MaterialPropertiesReader::ReadFromSetupFile(const std::str
             valueStr = valueStr.substr(0, commentPos);
 
         try
-        {
-            const auto foundProperty = std::ranges::find_if(propertiesToFind, [&](const auto& prop){ return prop.name == key; });
-            if (foundProperty != propertiesToFind.end())
-                foundProperty->value = std::stod(valueStr);
+        {   
+            propertiesMap.at(key) = std::stod(valueStr);
         }
         catch (const std::exception&)
         {
@@ -53,5 +57,5 @@ std::array<double, 3> MaterialPropertiesReader::ReadFromSetupFile(const std::str
         }
     }
 
-    return { propertiesToFind[0].value, propertiesToFind[1].value, propertiesToFind[2].value };
+    return output;
 }

@@ -8,7 +8,7 @@ set(${target_name}_hpp  Solver.hpp
 
 add_library(${target_name}  STATIC)
 
-cmake_path(GET CMAKE_CURRENT_SOURCE_DIR     PARENT_PATH     MESH_GENERATOR_PARENT_DIR)
+cmake_path(GET CMAKE_CURRENT_SOURCE_DIR     PARENT_PATH     SOLVER_PARENT_DIR)
 
 target_link_libraries(${target_name}
     PRIVATE
@@ -16,6 +16,8 @@ target_link_libraries(${target_name}
         Mesh
         BoundaryCondition
         ResultsExporter
+    INTERFACE
+        Properties
 )
 
 target_sources(${target_name}
@@ -23,7 +25,7 @@ target_sources(${target_name}
         ${${target_name}_src}
     PUBLIC
         FILE_SET HEADERS
-        BASE_DIRS ${MESH_GENERATOR_PARENT_DIR}
+        BASE_DIRS ${SOLVER_PARENT_DIR}
         FILES ${${target_name}_hpp}
 )
 
