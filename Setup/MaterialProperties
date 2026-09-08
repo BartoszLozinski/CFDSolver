@@ -1,0 +1,5 @@
+{
+    thermalConductivity     16.0
+    specificHeatCapacity    500.0
+    density                 7850.0
+}

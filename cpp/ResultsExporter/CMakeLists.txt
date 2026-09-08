@@ -1,9 +1,11 @@
 set(target_name ResultsExporter)
 
 set(${target_name}_src  CSVExporter.cpp
+                        MaterialPropertiesReader.cpp
 )
 
 set(${target_name}_hpp  CSVExporter.hpp
+                        MaterialPropertiesReader.hpp
 )
 
 add_library(${target_name}  STATIC)

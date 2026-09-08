@@ -5,9 +5,6 @@
 
 void CSVExporter::WriteRow(const std::vector<double>& row, std::ofstream& outputFile)
 {
-    if (!outputFile.is_open())
-        throw std::runtime_error("File is not opened");
-
     for (std::size_t i = 0; i < row.size(); ++i)
     {
         const char separator = (i + 1) != row.size() ? '\t' : '\n';
