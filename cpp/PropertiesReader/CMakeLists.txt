@@ -2,10 +2,12 @@ set(target_name PropertiesReader)
 
 set(${target_name}_src  MaterialPropertiesReader.cpp
                         MeshPropertiesReader.cpp
+                        SimulationPropertiesReader.cpp
 )
 
 set(${target_name}_hpp  MaterialPropertiesReader.hpp
                         MeshPropertiesReader.hpp
+                        SimulationPropertiesReader.hpp
 )
 
 add_library(${target_name}  STATIC)

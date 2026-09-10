@@ -1,10 +1,6 @@
 #pragma once
 
 #include <string>
-#include <map>
-#include <variant>
-#include <functional>
-
 #include "../Properties/MeshProperties.hpp"
 
 class MeshPropertiesReader

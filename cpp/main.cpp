@@ -3,6 +3,7 @@
 #include "Mesh/MeshGenerator.hpp"
 #include "PropertiesReader/MaterialPropertiesReader.hpp"
 #include "PropertiesReader/MeshPropertiesReader.hpp"
+#include "PropertiesReader/SimulationPropertiesReader.hpp"
 
 #include <chrono>
 #include <iostream>
@@ -14,17 +15,12 @@ int main()
 {
     const auto materialProperties = MaterialPropertiesReader{}.ReadFromSetupFile();
     const auto mesh = MeshGenerator{}.GenerateMesh(MeshPropertiesReader{}.ReadFromSetupFile());
+    const auto simulationProperties = SimulationPropertiesReader{}.ReadFromSetupFile();
 
-    // Todo add properties reader for simulation config
-    static constexpr double dt = 200; // [s]
-    static constexpr bool shouldExportResults = true;
-    static constexpr uint32_t exportFrequency = 100;
-    static constexpr uint32_t timesteps = 1000;
-
-    Solver::ExplicitHeatConduction solver{ materialProperties, dt, shouldExportResults, exportFrequency };
+    Solver::ExplicitHeatConduction solver{ materialProperties, simulationProperties.dt, simulationProperties.shouldExportResults, simulationProperties.exportFrequency };
 
     const auto start = Clock::now();
-    solver.Solve(mesh, timesteps);
+    solver.Solve(mesh, simulationProperties.timesteps);
     const auto end = Clock::now();
 
     const std::chrono::duration<double> elapsed = end - start;

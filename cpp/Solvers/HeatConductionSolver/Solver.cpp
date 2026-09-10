@@ -51,10 +51,10 @@ namespace Solver
         auto rx = alfa * dt / (dx * dx);
         auto ry = alfa * dt / (dy * dy);
 
-        if (rx + ry > 0.5)
+        if ((rx + ry) > 0.5)
         {
             std::cout << "Warning: The solution may be unstable. Timestep will be adjusted.\n";
-            dt = 0.9 * dx * dx / (2.0 * alfa * (dx *dx + dy * dy));
+            dt = 0.9 * dx * dx * dy * dy/ (2.0 * alfa * (dx * dx + dy * dy));
             rx = alfa * dt / (dx * dx);
             ry = alfa * dt / (dy * dy); 
             std::cout << std::format("New timestep: {}\n", dt);            
