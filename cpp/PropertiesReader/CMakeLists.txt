@@ -5,7 +5,8 @@ set(${target_name}_src  MaterialPropertiesReader.cpp
                         SimulationPropertiesReader.cpp
 )
 
-set(${target_name}_hpp  MaterialPropertiesReader.hpp
+set(${target_name}_hpp  PropertiesReaderBase.hpp
+                        MaterialPropertiesReader.hpp
                         MeshPropertiesReader.hpp
                         SimulationPropertiesReader.hpp
 )
