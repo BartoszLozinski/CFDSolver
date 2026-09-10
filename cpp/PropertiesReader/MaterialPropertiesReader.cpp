@@ -1,16 +1,15 @@
 #include "MaterialPropertiesReader.hpp"
 
-#include <algorithm>
-#include <filesystem>
-#include <fstream>
-#include <format>
-#include <map>
-#include <sstream>
-#include <stdexcept>
-#include <type_traits>
-#include <variant>
+MaterialPropertiesReader::PropertiesMap MaterialPropertiesReader::CreatePropertiesMap_Impl(MaterialProperties& propertiesStruct) const
+    {
+        return PropertiesMap{ 
+            {"thermalConductivity", propertiesStruct.thermalConductivity},
+            {"specificHeatCapacity", propertiesStruct.specificHeatCapacity},
+            {"density", propertiesStruct.density}
+        };
+    };
 
-MaterialProperties MaterialPropertiesReader::ReadFromSetupFile(const std::string& filename /* = "Setup/MaterialProperties" */)
+MaterialProperties MaterialPropertiesReader::ReadFromSetupFile(const std::string& filename /* = "Setup/MaterialProperties" */) const
 {
     return ParsePropertiesFile<MaterialProperties>(filename);
 }

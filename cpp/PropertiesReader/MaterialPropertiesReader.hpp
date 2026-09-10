@@ -12,16 +12,8 @@ class MaterialPropertiesReader : public PropertiesReaderBase<MaterialPropertiesR
 friend PropertiesReaderBase<MaterialPropertiesReader>;
 
 protected:
-    PropertiesMap CreatePropertiesMap_Impl(MaterialProperties& propertiesStruct) const
-    {
-        return std::map<std::string, Var>{ 
-            {"thermalConductivity", propertiesStruct.thermalConductivity},
-            {"specificHeatCapacity", propertiesStruct.specificHeatCapacity},
-            {"density", propertiesStruct.density}
-        };
-    };
-
+    PropertiesMap CreatePropertiesMap_Impl(MaterialProperties& propertiesStruct) const;
 public:
     MaterialPropertiesReader() = default;
-    MaterialProperties ReadFromSetupFile(const std::string& filename = "Setup/MaterialProperties");
+    MaterialProperties ReadFromSetupFile(const std::string& filename = "Setup/MaterialProperties") const;
 };

@@ -13,9 +13,9 @@ using Clock = std::chrono::steady_clock;
 
 int main()
 {
-    const auto materialProperties = MaterialPropertiesReader{}.ReadFromSetupFile();
-    const auto mesh = MeshGenerator{}.GenerateMesh(MeshPropertiesReader{}.ReadFromSetupFile());
-    const auto simulationProperties = SimulationPropertiesReader{}.ReadFromSetupFile();
+    const auto materialProperties = MaterialPropertiesReader{}.ReadFromSetupFile("Setup/MaterialProperties");
+    const auto mesh = MeshGenerator{}.GenerateMesh(MeshPropertiesReader{}.ReadFromSetupFile("Setup/MeshProperties"));
+    const auto simulationProperties = SimulationPropertiesReader{}.ReadFromSetupFile("Setup/SimulationProperties");
 
     Solver::ExplicitHeatConduction solver{ materialProperties, simulationProperties.dt, simulationProperties.shouldExportResults, simulationProperties.exportFrequency };
 

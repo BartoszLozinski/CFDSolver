@@ -27,7 +27,7 @@ protected:
     }
 
     template<typename PropertiesStruct>
-    PropertiesStruct ParsePropertiesFile(const std::string& filename)
+    PropertiesStruct ParsePropertiesFile(const std::string& filename) const
     {
         PropertiesStruct output;
 
@@ -100,4 +100,5 @@ protected:
     PropertiesReaderBase() = default;
 
 public:
+
 };
