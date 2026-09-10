@@ -1,5 +1,5 @@
 {
-    dt                      6
+    dt                      2
     shouldExportResults     true
     exportFrequency         200
     timesteps               2000

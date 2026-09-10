@@ -2,19 +2,27 @@
 
 #include <algorithm>
 #include <filesystem>
-#include <format>
 #include <fstream>
+#include <format>
 #include <map>
-#include <ranges>
-#include <stdexcept>
 #include <sstream>
+#include <stdexcept>
+#include <type_traits>
+#include <variant>
 
 MaterialProperties MaterialPropertiesReader::ReadFromSetupFile(const std::string& filename /* = "Setup/MaterialProperties" */)
 {
     MaterialProperties output;
-    std::map<std::string, double&> propertiesMap = { {"thermalConductivity", output.thermalConductivity}
-                                                   , {"specificHeatCapacity", output.specificHeatCapacity}
-                                                   , {"density", output.density} };
+    
+    using DoubleRef = std::reference_wrapper<double>;
+    using Var = std::variant<DoubleRef>;
+
+    std::map<std::string, Var> propertiesMap = { 
+        {"thermalConductivity", output.thermalConductivity},
+        {"specificHeatCapacity", output.specificHeatCapacity},
+        {"density", output.density}
+    };
+
 
     std::filesystem::path path = filename;
 
@@ -47,13 +55,24 @@ MaterialProperties MaterialPropertiesReader::ReadFromSetupFile(const std::string
         if (auto commentPos = valueStr.find('#'); commentPos != std::string::npos)
             valueStr = valueStr.substr(0, commentPos);
 
+        auto it = propertiesMap.find(key);
+        if (it == propertiesMap.end())
+            continue; // unknown property
+        
         try
-        {   
-            propertiesMap.at(key) = std::stod(valueStr);
+        {
+            std::visit([&](auto& ref)
+            {
+                using T = std::remove_cvref_t<decltype(ref.get())>;
+                if constexpr (std::is_same_v<T, double>)
+                {
+                    ref.get() = std::stod(valueStr);
+                }
+            }, it->second);
         }
         catch (const std::exception&)
         {
-            throw std::runtime_error(std::format("Invalid numeric value for property '{}' in file {}", key, filename));
+            throw std::runtime_error(std::format("Invalid value for property '{}' in file {}", key, filename));
         }
     }
 
