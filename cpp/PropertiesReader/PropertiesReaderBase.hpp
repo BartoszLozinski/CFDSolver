@@ -63,7 +63,10 @@ protected:
 
             auto it = propertiesMap.find(key);
             if (it == propertiesMap.end())
-                continue; // unknown property
+            {
+                std::cout << std::format("Uknown property found under {} key.\n", key);
+                continue;
+            }
 
             try
             {
