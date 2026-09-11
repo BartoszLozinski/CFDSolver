@@ -18,6 +18,7 @@ add_subdirectory(Properties)
 add_subdirectory(PropertiesReader)
 add_subdirectory(Solvers)
 add_subdirectory(ResultsExporter)
+add_subdirectory(UnitTests)
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
@@ -29,6 +30,8 @@ target_link_libraries(${PROJECT_NAME}
 target_compile_options(${PROJECT_NAME}
     PRIVATE
         ${CORE_FLAGS}
+        $<$<CONFIG:DEBUG>: -Og -g>
+        $<$<CONFIG:RELEASE>: -O3>
 )
 
 set_target_properties(${PROJECT_NAME}
