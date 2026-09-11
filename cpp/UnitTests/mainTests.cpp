@@ -2,11 +2,6 @@
 
 #include "PropertiesReaderTests.hpp"
 
-TEST(ConfigurationTest, AssertTrue)
-{
-    ASSERT_TRUE(true);
-}
-
 int main(int argc, char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
