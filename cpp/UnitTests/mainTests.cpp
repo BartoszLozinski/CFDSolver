@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include "PropertiesReaderTests.hpp"
+
 TEST(ConfigurationTest, AssertTrue)
 {
     ASSERT_TRUE(true);
