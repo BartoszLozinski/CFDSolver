@@ -10,14 +10,12 @@
 
 namespace Solver
 {
-    ExplicitHeatConduction::ExplicitHeatConduction(const MaterialProperties& materialProperties_, const double dt_, const bool shouldExportResults_, const uint32_t exportFrequency_)
+    ExplicitHeatConduction::ExplicitHeatConduction(const MaterialProperties& materialProperties_, const SimulationProperties& simulationProperties_)
         : materialProperties(materialProperties_)
-        , dt(dt_)
-        , shouldExportResults(shouldExportResults_)
-        , exportFrequency(exportFrequency_)
+        , simulationProperties(simulationProperties_)
     {};
 
-    void ExplicitHeatConduction::Solve(const Mesh& mesh, const uint32_t timeSteps)
+    void ExplicitHeatConduction::Solve(const Mesh& mesh)
     {
         //TODO add boundary conditions to the setup file
         const double T_top = 373.0; // [K]
@@ -46,7 +44,8 @@ namespace Solver
 
         const auto dx = mesh.dx;
         const auto dy = mesh.dy;
-        
+        auto& dt = simulationProperties.dt;
+
         const auto alfa = materialProperties.thermalConductivity / (materialProperties.specificHeatCapacity * materialProperties.density);
         auto rx = alfa * dt / (dx * dx);
         auto ry = alfa * dt / (dy * dy);
@@ -62,7 +61,7 @@ namespace Solver
 
         auto Tprevious = T.grid;
 
-        for (std::size_t timestep = 0; timestep <= timeSteps; ++timestep)
+        for (std::size_t timestep = 0; timestep <= simulationProperties.timesteps; ++timestep)
         {
             Tprevious = T.grid;
             T.ApplyBoundaryCondition(bcTop, bcBottom, bcLeft, bcRight);
@@ -75,13 +74,10 @@ namespace Solver
                     T.grid[xi][yi] = (Tprevious[xi + 1][yi] + Tprevious[xi - 1][yi]) * rx + 
                                      (Tprevious[xi][yi + 1] + Tprevious[xi][yi - 1]) * ry + 
                                      (Tprevious[xi][yi] * (1.0 - 2.0 * (rx + ry)));
-
-                    // todo export for visualization
-                    // todo add time measurement
                 }
             }
 
-            if (shouldExportResults && timestep % exportFrequency == 0)
+            if (simulationProperties.shouldExportResults && timestep % simulationProperties.exportFrequency == 0)
             {
                 std::string filename = std::format("Results/T/{}.csv", timestep);
                 CSVExporter exporter;

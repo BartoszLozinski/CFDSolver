@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../Properties/MaterialProperties.hpp"
+#include "../../Properties/SimulationProperties.hpp"
 #include "../../Mesh/Mesh.hpp"
 
 namespace Solver
@@ -9,13 +10,12 @@ namespace Solver
     {
     private:
         MaterialProperties materialProperties;
-        double dt;
-        bool shouldExportResults{ false };
-        uint32_t exportFrequency{};
+        SimulationProperties simulationProperties;
+
 
     public:
-        ExplicitHeatConduction(const MaterialProperties& materialProperties_, const double dt_, const bool shouldExportResults_ = false, const uint32_t exportFrequency_ = 0);
+        ExplicitHeatConduction(const MaterialProperties& materialProperties_, const SimulationProperties& simulationProperties_);
 
-        void Solve(const Mesh& mesh, const uint32_t timeSteps);
+        void Solve(const Mesh& mesh);
     };
 };

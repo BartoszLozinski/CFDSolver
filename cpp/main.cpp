@@ -17,10 +17,10 @@ int main()
     const auto mesh = MeshGenerator{}.GenerateMesh(MeshPropertiesReader{}.ReadFromSetupFile("Setup/MeshProperties"));
     const auto simulationProperties = SimulationPropertiesReader{}.ReadFromSetupFile("Setup/SimulationProperties");
 
-    Solver::ExplicitHeatConduction solver{ materialProperties, simulationProperties.dt, simulationProperties.shouldExportResults, simulationProperties.exportFrequency };
+    Solver::ExplicitHeatConduction solver{ materialProperties, simulationProperties };
 
     const auto start = Clock::now();
-    solver.Solve(mesh, simulationProperties.timesteps);
+    solver.Solve(mesh);
     const auto end = Clock::now();
 
     const std::chrono::duration<double> elapsed = end - start;
