@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "MathOperatorsTests.hpp"
 #include "PropertiesReaderTests.hpp"
 
 // TODO add UT for 1D heat conduction solver

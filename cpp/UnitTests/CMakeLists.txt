@@ -13,6 +13,7 @@ target_link_libraries(
             ${GTEST_LIBRARIES}
             ${GMOCK_LIBRARIES}
             PropertiesReader
+            MathOperators
 )
 
 target_compile_options(
