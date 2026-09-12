@@ -12,6 +12,7 @@ set(CORE_FLAGS  -Wall
 add_executable(${PROJECT_NAME} main.cpp)
 
 add_subdirectory(BoundaryCondition)
+add_subdirectory(MathOperators)
 add_subdirectory(Mesh)
 add_subdirectory(Field)
 add_subdirectory(Properties)

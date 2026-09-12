@@ -6,16 +6,19 @@
 
 namespace Solver
 {
-    class ExplicitHeatConduction
+    namespace FiniteDifference
     {
-    private:
-        MaterialProperties materialProperties;
-        SimulationProperties simulationProperties;
+        class ExplicitHeatConduction
+        {
+        private:
+            MaterialProperties materialProperties;
+            SimulationProperties simulationProperties;
 
 
-    public:
-        ExplicitHeatConduction(const MaterialProperties& materialProperties_, const SimulationProperties& simulationProperties_);
+        public:
+            ExplicitHeatConduction(const MaterialProperties& materialProperties_, const SimulationProperties& simulationProperties_);
 
-        void Solve(const Mesh& mesh);
-    };
+            void Solve(const Mesh& mesh);
+        };
+    }
 };

@@ -17,7 +17,7 @@ int main()
     const auto mesh = MeshGenerator{}.GenerateMesh(MeshPropertiesReader{}.ReadFromSetupFile("Setup/MeshProperties"));
     const auto simulationProperties = SimulationPropertiesReader{}.ReadFromSetupFile("Setup/SimulationProperties");
 
-    Solver::ExplicitHeatConduction solver{ materialProperties, simulationProperties };
+    Solver::FiniteDifference::ExplicitHeatConduction solver{ materialProperties, simulationProperties };
 
     const auto start = Clock::now();
     solver.Solve(mesh);

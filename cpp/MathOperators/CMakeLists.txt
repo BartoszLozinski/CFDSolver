@@ -1,32 +1,18 @@
-set(target_name Solvers)
+set(target_name MathOperators)
 
-set(${target_name}_src  Solver.cpp
-)
-
-set(${target_name}_hpp  Solver.hpp
-)
+set(${target_name}_src  Laplacian.cpp)
+set(${target_name}_hpp  Laplacian.hpp)
 
 add_library(${target_name}  STATIC)
 
-cmake_path(GET CMAKE_CURRENT_SOURCE_DIR     PARENT_PATH     SOLVER_PARENT_DIR)
-
-target_link_libraries(${target_name}
-    PRIVATE
-        Field
-        MathOperators
-        Mesh
-        BoundaryCondition
-        ResultsExporter
-    INTERFACE
-        Properties
-)
+cmake_path(GET CMAKE_CURRENT_SOURCE_DIR     PARENT_PATH     MATH_OPERATORS_PARENT_DIR)
 
 target_sources(${target_name}
     PRIVATE
         ${${target_name}_src}
     PUBLIC
         FILE_SET HEADERS
-        BASE_DIRS ${SOLVER_PARENT_DIR}
+        BASE_DIRS ${MATH_OPERATORS_PARENT_DIR}
         FILES ${${target_name}_hpp}
 )
 
