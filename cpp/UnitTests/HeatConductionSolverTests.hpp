@@ -41,14 +41,17 @@ TEST(HeatConductionSolverTests, ConvergesToLinearOneDimensionalTemperatureProfil
 	std::ifstream resultFile{resultPath};
 	ASSERT_TRUE(resultFile.is_open());
     static constexpr double resultTolerance = 1e-3;
+    static constexpr std::size_t ghostCellsOffset = 2;
+    static constexpr double hardcodedTTop = 373.0;
+    static constexpr double hardcodedTBottom = 273.0;
 
-	double value{};
-	for (std::size_t row = 0; row < 10; ++row)
+    double value{};
+	for (std::size_t row = 0; row < (mesh.nx + ghostCellsOffset); ++row)
 	{
 		const double expectedTemperature =
-			373.0 + static_cast<double>(row) / (mesh.nx + 1) * (273.0 - 373.0);
+			hardcodedTTop + static_cast<double>(row) / (mesh.nx + 1) * (hardcodedTBottom - hardcodedTTop);
 
-		for (std::size_t column = 0; column < 3; ++column)
+		for (std::size_t column = 0; column < (mesh.ny + ghostCellsOffset); ++column)
 		{
 			ASSERT_TRUE(resultFile >> value);
 			EXPECT_NEAR(value, expectedTemperature, resultTolerance);

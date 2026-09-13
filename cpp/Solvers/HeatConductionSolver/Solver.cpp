@@ -25,7 +25,11 @@ namespace Solver
 
             void HeatConduction::Solve(const Mesh& mesh, const std::string_view finalResultPath)
             {
-                //TODO add boundary conditions to the setup file
+                // TODO add boundary conditions to the setup file
+                // Probably mesh generator would have to create a mesh, store indicies
+                // and name specified indiecies for a boundaryCondition (also aligned if Neumann?)
+                // or maybe modify it when moved to FVM as BC should be applied at faces
+                
                 const double T_top = 373.0; // [K]
                 const double T_bottom = 273.0; // [K]
 
@@ -99,6 +103,7 @@ namespace Solver
                     ++timestep;                    
                 }
 
+                // TODO add result export to the separate class and lib
                 std::cout << std::format("Finished after {} timesteps ({} [s])\n", timestep, timestep * dt);
             
                 if (simulationProperties.shouldExportResults)
