@@ -6,8 +6,11 @@
 #include "../../MathOperators/Laplacian.hpp"
 #include "../../ResultsExporter/CSVExporter.hpp"
 
-#include <iostream>
+#include <algorithm>
+#include <cmath>
 #include <format>
+#include <iostream>
+#include <limits>
 
 namespace Solver
 {
@@ -67,11 +70,15 @@ namespace Solver
                 
                 auto Tprevious = T.grid;
                 Operators::Laplacian laplacian{ mesh.dx, mesh.dy, Tprevious };
+                static constexpr double tolerance = 1e-6;
+                double maxResidual = std::numeric_limits<double>::infinity();
+                std::size_t timestep = 0;
 
-                for (std::size_t timestep = 0; timestep <= simulationProperties.timesteps; ++timestep)
+                while (timestep < simulationProperties.timesteps && maxResidual >= tolerance)
                 {
-                    Tprevious = T.grid;
+                    maxResidual = 0;
                     T.ApplyBoundaryCondition(bcTop, bcBottom, bcLeft, bcRight);
+                    Tprevious = T.grid;
 
                     static constexpr std::size_t ghostCellOffset = 1;
                     for (std::size_t xi = ghostCellOffset; xi <= mesh.nx; ++xi)
@@ -79,6 +86,7 @@ namespace Solver
                         for (std::size_t yi = ghostCellOffset; yi <= mesh.ny; ++yi)
                         {
                             T.grid[xi][yi] = Tprevious[xi][yi] + alfa * dt * laplacian(xi, yi);
+                            maxResidual = std::max(maxResidual, std::abs(T.grid[xi][yi] - Tprevious[xi][yi]));
                         }
                     }
 
@@ -88,6 +96,17 @@ namespace Solver
                         CSVExporter exporter;
                         exporter.Export(filename, T.grid);
                     }
+
+                    ++timestep;                    
+                }
+
+                std::cout << std::format("Finished after {} timesteps ({} [s])", timestep, timestep * dt);
+            
+                if (simulationProperties.shouldExportResults)
+                {
+                    std::string filename = std::format("Results/T/{}.csv", timestep);
+                    CSVExporter exporter;
+                    exporter.Export(filename, T.grid);
                 }
             }
         }

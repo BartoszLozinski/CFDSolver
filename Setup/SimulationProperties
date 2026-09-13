@@ -2,5 +2,5 @@
     dt                      6
     shouldExportResults     true
     exportFrequency         200
-    timesteps               2000
+    timesteps               4000
 }
