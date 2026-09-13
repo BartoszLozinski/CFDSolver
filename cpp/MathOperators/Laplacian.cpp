@@ -6,7 +6,7 @@
 
 namespace Operators
 {
-    Laplacian::Laplacian(const double dx_, const double dy_, Grid2D& grid_)
+    Laplacian::Laplacian(const double dx_, const double dy_, const Grid2D& grid_)
         : dx(dx_)
         , dy(dy_)
         , grid(grid_)

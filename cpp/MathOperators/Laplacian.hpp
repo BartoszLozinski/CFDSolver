@@ -13,10 +13,10 @@ namespace Operators
     private:
         double dx{};
         double dy{};
-        Grid2D& grid;
+        const Grid2D& grid;
 
     public:
-        Laplacian(const double dx_, const double dy_, Grid2D& grid_);
+        Laplacian(const double dx_, const double dy_, const Grid2D& grid_);
         double operator()(const std::size_t ix, const std::size_t iy) const;
     };
 }

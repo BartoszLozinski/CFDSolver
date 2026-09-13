@@ -7,7 +7,8 @@ SimulationPropertiesReader::PropertiesMap SimulationPropertiesReader::CreateProp
             {"dt", DoubleRef(propertiesStruct.dt)},
             {"shouldExportResults", BoolRef(propertiesStruct.shouldExportResults)},
             {"exportFrequency", UIntRef(propertiesStruct.exportFrequency)},
-            {"timesteps", UIntRef(propertiesStruct.timesteps)}
+            {"timesteps", UIntRef(propertiesStruct.timesteps)},
+            {"tolerance", DoubleRef{propertiesStruct.tolerance}}
         };
     };
 

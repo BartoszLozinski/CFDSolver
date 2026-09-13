@@ -70,15 +70,14 @@ namespace Solver
                 
                 auto Tprevious = T.grid;
                 Operators::Laplacian laplacian{ mesh.dx, mesh.dy, Tprevious };
-                static constexpr double tolerance = 1e-6;
                 double maxResidual = std::numeric_limits<double>::infinity();
                 std::size_t timestep = 0;
 
-                while (timestep < simulationProperties.timesteps && maxResidual >= tolerance)
+                while (timestep < simulationProperties.timesteps && maxResidual >= simulationProperties.tolerance)
                 {
                     maxResidual = 0;
                     T.ApplyBoundaryCondition(bcTop, bcBottom, bcLeft, bcRight);
-                    Tprevious = T.grid;
+                    const auto Tprevious = T.grid;
 
                     static constexpr std::size_t ghostCellOffset = 1;
                     for (std::size_t xi = ghostCellOffset; xi <= mesh.nx; ++xi)
@@ -100,7 +99,7 @@ namespace Solver
                     ++timestep;                    
                 }
 
-                std::cout << std::format("Finished after {} timesteps ({} [s])", timestep, timestep * dt);
+                std::cout << std::format("Finished after {} timesteps ({} [s])\n", timestep, timestep * dt);
             
                 if (simulationProperties.shouldExportResults)
                 {
