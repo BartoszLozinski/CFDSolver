@@ -12,6 +12,7 @@ target_link_libraries(
         PRIVATE
             ${GTEST_LIBRARIES}
             ${GMOCK_LIBRARIES}
+            HeatConductionSolver
             PropertiesReader
             MathOperators
 )

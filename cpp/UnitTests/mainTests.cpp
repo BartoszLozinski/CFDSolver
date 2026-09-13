@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "HeatConductionSolverTests.hpp"
 #include "MathOperatorsTests.hpp"
 #include "PropertiesReaderTests.hpp"
 

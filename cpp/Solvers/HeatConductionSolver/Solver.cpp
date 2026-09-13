@@ -23,7 +23,7 @@ namespace Solver
                 , simulationProperties(simulationProperties_)
             {};
 
-            void HeatConduction::Solve(const Mesh& mesh)
+            void HeatConduction::Solve(const Mesh& mesh, const std::string_view finalResultPath)
             {
                 //TODO add boundary conditions to the setup file
                 const double T_top = 373.0; // [K]
@@ -77,7 +77,7 @@ namespace Solver
                 {
                     maxResidual = 0;
                     T.ApplyBoundaryCondition(bcTop, bcBottom, bcLeft, bcRight);
-                    const auto Tprevious = T.grid;
+                    Tprevious = T.grid;
 
                     static constexpr std::size_t ghostCellOffset = 1;
                     for (std::size_t xi = ghostCellOffset; xi <= mesh.nx; ++xi)
@@ -89,7 +89,7 @@ namespace Solver
                         }
                     }
 
-                    if (simulationProperties.shouldExportResults && timestep % simulationProperties.exportFrequency == 0)
+                    if (simulationProperties.shouldExportResults && finalResultPath.empty() && timestep % simulationProperties.exportFrequency == 0)
                     {
                         std::string filename = std::format("Results/T/{}.csv", timestep);
                         CSVExporter exporter;
@@ -103,7 +103,9 @@ namespace Solver
             
                 if (simulationProperties.shouldExportResults)
                 {
-                    std::string filename = std::format("Results/T/{}.csv", timestep);
+                    std::string filename = finalResultPath.empty()
+                        ? std::format("Results/T/{}.csv", timestep)
+                        : std::string{finalResultPath};
                     CSVExporter exporter;
                     exporter.Export(filename, T.grid);
                 }
