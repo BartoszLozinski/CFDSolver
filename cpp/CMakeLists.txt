@@ -25,7 +25,7 @@ add_subdirectory(UnitTests)
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
         Mesh
-        Solvers
+        HeatConductionSolver
         PropertiesReader
 )
 

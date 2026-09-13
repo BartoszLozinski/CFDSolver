@@ -1,4 +1,4 @@
-set(target_name Solvers)
+set(target_name HeatConductionSolver)
 
 set(${target_name}_src  Solver.cpp
 )
