@@ -5,7 +5,7 @@
 #include "Mesh/MeshGenerator.hpp"
 #include "Properties/MaterialProperties.hpp"
 #include "Properties/SimulationProperties.hpp"
-#include "Solvers/HeatConductionSolver/Solver.hpp"
+#include "Solvers/HeatConductionSolver/ExplicitHeatConduction.hpp"
 
 #include <filesystem>
 #include <fstream>

@@ -1,4 +1,4 @@
-#include "Solvers/HeatConductionSolver/Solver.hpp"
+#include "Solvers/HeatConductionSolver/ExplicitHeatConduction.hpp"
 #include "Properties/MaterialProperties.hpp"
 #include "Mesh/MeshGenerator.hpp"
 #include "PropertiesReader/MaterialPropertiesReader.hpp"
