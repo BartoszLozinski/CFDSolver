@@ -3,12 +3,6 @@ import BoundaryCondition as BC
 import numpy as np
 import matplotlib.pyplot as plot
 
-class MaterialProperties:
-    def __init__(self, thermal_conductivity, density, specific_heat):
-        self.thermal_conductivity = thermal_conductivity
-        self.density = density
-        self.specific_heat = specific_heat
-
 class ExplicitSolver():
     def __init__(self, material_properties, dt):
         self.material_properties = material_properties
