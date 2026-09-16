@@ -4,13 +4,13 @@ import ExplicitHeatConduction
 import time
 import MaterialProperties as MaterialProp
 
-mesh_properties = MeshProp.MeshProperties.read_from_file()
+mesh_properties = MeshProp.MeshProperties.read_from_file("Setup/MeshProperties")
 mesh_generator = Mesh.MeshGenerator(mesh_properties.dx, mesh_properties.dy, mesh_properties.nx, mesh_properties.ny)
 mesh = Mesh.Mesh(mesh_generator)
 
 # Stainless steel
 # material_properties = MP.MaterialProperties(16.0, 7850, 500)
-material_properties = MaterialProp.MaterialProperties.read_from_file()
+material_properties = MaterialProp.MaterialProperties.read_from_file("Setup/MaterialProperties")
 
 solver = ExplicitHeatConduction.ExplicitSolver(material_properties=material_properties, dt=100)
 
