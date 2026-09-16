@@ -65,11 +65,11 @@ class ExplicitSolver():
             # lets plot internally for now
             if should_plot and (timestep % plot_interval == 0):
                 T2d_plot = T.field[1:-1, 1:-1]  # without ghost cells
-                T2d_plot = T2d_plot.T
 
                 if meshplot is None:
                     meshplot = ax.pcolormesh(X, Y, T2d_plot, cmap="jet", shading="auto", vmin=T_bottom, vmax=T_top)
                     cbar = fig.colorbar(meshplot, ax=ax, label="Temperature [K]")
+                    ax.invert_yaxis()
                 else:
                     meshplot.set_array(T2d_plot.ravel())
                     meshplot.set_clim(T_bottom, T_top)
