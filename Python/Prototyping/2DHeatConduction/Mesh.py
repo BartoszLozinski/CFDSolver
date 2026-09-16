@@ -1,11 +1,11 @@
 import numpy as np
 
 class MeshGenerator():
-    def __init__(self, dx, dy, nx, ny):
-        self.dx = dx
-        self.dy = dy
-        self.nx = nx
-        self.ny = ny
+    def __init__(self, mesh_properties):
+        self.dx = mesh_properties.dx
+        self.dy = mesh_properties.dy
+        self.nx = mesh_properties.nx
+        self.ny = mesh_properties.ny
 
     def generate_mesh(self):
         ghost_cells_layers = int(2)

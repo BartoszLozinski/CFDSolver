@@ -5,7 +5,7 @@ import time
 import MaterialProperties as MaterialProp
 
 mesh_properties = MeshProp.MeshProperties.read_from_file("Setup/MeshProperties")
-mesh_generator = Mesh.MeshGenerator(mesh_properties.dx, mesh_properties.dy, mesh_properties.nx, mesh_properties.ny)
+mesh_generator = Mesh.MeshGenerator(mesh_properties)
 mesh = Mesh.Mesh(mesh_generator)
 
 # Stainless steel
