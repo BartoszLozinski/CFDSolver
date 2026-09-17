@@ -4,12 +4,12 @@ import numpy as np
 import matplotlib.pyplot as plot
 
 class ExplicitSolver():
-    def __init__(self, material_properties, dt):
+    def __init__(self, material_properties, simulation_properties):
         self.material_properties = material_properties
-        self.dt = dt
+        self.simulation_properties = simulation_properties
 
     # boundary conditions to fix 
-    def solve(self, mesh, timesteps, should_plot = False, plot_interval = 10):
+    def solve(self, mesh):
         # y_tn+1_xi = r T_xi+1 + (1 - 2 * r) * T_xi + r * T_xi_-1
         #      
         # For now assume initial value equal to T_0
@@ -27,7 +27,7 @@ class ExplicitSolver():
 
         dx = mesh.dx
         dy = mesh.dy
-        dt = self.dt
+        dt = self.simulation_properties.dt
         alfa = self.material_properties.thermal_conductivity / (self.material_properties.density *
                                                                 self.material_properties.specific_heat)
         rx = alfa * dt / dx**2
@@ -42,7 +42,7 @@ class ExplicitSolver():
             print(f'dt is updated to dt = {self.dt} [s]')
 
         # plotting only
-        if should_plot:
+        if self.simulation_properties.should_export_results:
             x = np.linspace(0, (mesh.nx + 1) * mesh.dx, mesh.nx)
             y = np.linspace(0, (mesh.ny + 1) * mesh.dy, mesh.ny)
             X, Y = np.meshgrid(x, y)
@@ -50,7 +50,7 @@ class ExplicitSolver():
             cbar = None
             meshplot = None
 
-        for timestep in range(timesteps):
+        for timestep in range(self.simulation_properties.timesteps):
             T.set_boundary_conditions(bc_top, bc_bottom, bc_left, bc_right)
             T_previous = T.copy()
 
@@ -63,7 +63,7 @@ class ExplicitSolver():
                                  (T_previous[xi, yi] * (1 - 2 * rx - 2 * ry)))
 
             # lets plot internally for now
-            if should_plot and (timestep % plot_interval == 0):
+            if self.simulation_properties.should_export_results and (timestep % self.simulation_properties.export_frequency == 0):
                 T2d_plot = T.field[1:-1, 1:-1]  # without ghost cells
 
                 if meshplot is None:
