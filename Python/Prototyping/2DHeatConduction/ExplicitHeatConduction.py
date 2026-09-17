@@ -1,6 +1,7 @@
 import Field
 import BoundaryCondition as BC
 from CSVExporter import CSVExporter
+from Laplacian import Laplacian
 
 class ExplicitSolver():
     def __init__(self, material_properties, simulation_properties):
@@ -45,14 +46,13 @@ class ExplicitSolver():
         for timestep in range(self.simulation_properties.timesteps):
             T.set_boundary_conditions(bc_top, bc_bottom, bc_left, bc_right)
             T_previous = T.copy()
+            laplacian = Laplacian(mesh.dx, mesh.dy, T_previous)
 
             for row in range(mesh.nx):
                 xi = row + 1  # internal row with ghost cell offset
                 for column in range(mesh.ny):
                     yi = column + 1  # internal column with ghost cell offset
-                    T[xi, yi] = ((T_previous[xi + 1, yi] + T_previous[xi - 1, yi]) * rx +
-                                 (T_previous[xi, yi + 1] + T_previous[xi, yi - 1]) * ry +
-                                 (T_previous[xi, yi] * (1 - 2 * rx - 2 * ry)))
+                    T[xi, yi] = T_previous[xi, yi] + alfa * dt * laplacian(xi, yi)
 
             if (self.simulation_properties.should_export_results
                     and not final_result_path
