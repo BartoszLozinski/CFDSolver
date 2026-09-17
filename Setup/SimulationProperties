@@ -2,6 +2,6 @@
     dt                      6
     shouldExportResults     true
     exportFrequency         200
-    timesteps               4000
+    timesteps               2000
     tolerance               1e-6
 }

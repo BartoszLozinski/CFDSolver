@@ -1,7 +1,6 @@
 import Field
 import BoundaryCondition as BC
-import numpy as np
-import matplotlib.pyplot as plot
+from CSVExporter import CSVExporter
 
 class ExplicitSolver():
     def __init__(self, material_properties, simulation_properties):
@@ -9,7 +8,7 @@ class ExplicitSolver():
         self.simulation_properties = simulation_properties
 
     # boundary conditions to fix 
-    def solve(self, mesh):
+    def solve(self, mesh, final_result_path=""):
         # y_tn+1_xi = r T_xi+1 + (1 - 2 * r) * T_xi + r * T_xi_-1
         #      
         # For now assume initial value equal to T_0
@@ -41,14 +40,7 @@ class ExplicitSolver():
             ry = alfa * dt / dy**2
             print(f'dt is updated to dt = {self.dt} [s]')
 
-        # plotting only
-        if self.simulation_properties.should_export_results:
-            x = np.linspace(0, (mesh.nx + 1) * mesh.dx, mesh.nx)
-            y = np.linspace(0, (mesh.ny + 1) * mesh.dy, mesh.ny)
-            X, Y = np.meshgrid(x, y)
-            fig, ax = plot.subplots()
-            cbar = None
-            meshplot = None
+        exporter = CSVExporter()
 
         for timestep in range(self.simulation_properties.timesteps):
             T.set_boundary_conditions(bc_top, bc_bottom, bc_left, bc_right)
@@ -62,22 +54,11 @@ class ExplicitSolver():
                                  (T_previous[xi, yi + 1] + T_previous[xi, yi - 1]) * ry +
                                  (T_previous[xi, yi] * (1 - 2 * rx - 2 * ry)))
 
-            # lets plot internally for now
-            if self.simulation_properties.should_export_results and (timestep % self.simulation_properties.export_frequency == 0):
-                T2d_plot = T.field[1:-1, 1:-1]  # without ghost cells
+            if (self.simulation_properties.should_export_results
+                    and not final_result_path
+                    and timestep % self.simulation_properties.export_frequency == 0):
+                exporter.export(f"Results/T/{timestep}.csv", T.field)
 
-                if meshplot is None:
-                    meshplot = ax.pcolormesh(X, Y, T2d_plot, cmap="jet", shading="auto", vmin=T_bottom, vmax=T_top)
-                    cbar = fig.colorbar(meshplot, ax=ax, label="Temperature [K]")
-                    ax.invert_yaxis()
-                else:
-                    meshplot.set_array(T2d_plot.ravel())
-                    meshplot.set_clim(T_bottom, T_top)
-                    meshplot.set_array(T2d_plot.ravel())
-
-                ax.set_xlabel("x [m]")
-                ax.set_ylabel("y [m]")
-                ax.set_title(f"2D Temperature Field at timestep {timestep}")
-
-                fig.canvas.draw_idle()
-                plot.pause(0.001)
+        if self.simulation_properties.should_export_results:
+            filename = final_result_path or f"Results/T/{self.simulation_properties.timesteps}.csv"
+            exporter.export(filename, T.field)
