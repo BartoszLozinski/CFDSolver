@@ -19,6 +19,12 @@ where   rd = dt * (1 + 2 / dx**2 + 2 / dy**2)
         rx = dt / dx**2
         ry = dt / dy**2
 
+        when alpha != 1
+
+        rx = alpha * dt / dx**2
+        ry = alpha * dt / dy**2
+        rd = 1 + 2 * rx + 2 * ry
+
 then:
 
 rd * T(xi, yi, tn+1) - rx * (T(x+1, y, tn+1) + T(x-1, y, tn+1)
@@ -54,16 +60,16 @@ class ImplicitSolver:
                 if yi > 1:
                     matrix[row, index(xi, yi - 1)] = -ry
                 else:
-                    diagonal -= ry #Due to neumann condition
+                    diagonal -= ry  # Due to neumann condition
 
                 if yi < mesh.ny:
                     matrix[row, index(xi, yi + 1)] = -ry
                 else:
-                    diagonal -= ry
+                    diagonal -= ry  # Due to neumann condition
 
                 matrix[row, row] = diagonal
 
-        return matrix.tocsr()
+        return matrix.tocsr()  # Compressed Sparse Row Format
 
     def solve(self, mesh, final_result_path=""):
         T_top = 373.0
