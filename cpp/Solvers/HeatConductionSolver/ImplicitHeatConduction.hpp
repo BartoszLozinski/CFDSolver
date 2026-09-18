@@ -9,10 +9,12 @@ namespace Solver
 {
     namespace FiniteDifference
     {
-        namespace Explicit
+        namespace Implicit
         {
             class HeatConduction : public SolverBase
             {
+            private:
+            
             public:
                 HeatConduction(const MaterialProperties& materialProperties_, const SimulationProperties& simulationProperties_);
                 void Solve(const Mesh& mesh, std::string_view finalResultPath = {}) override;

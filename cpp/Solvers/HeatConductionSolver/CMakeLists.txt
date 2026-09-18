@@ -1,9 +1,13 @@
 set(target_name HeatConductionSolver)
 
-set(${target_name}_src  ExplicitHeatConduction.cpp
+set(${target_name}_src  SolverBase.cpp
+                        ExplicitHeatConduction.cpp
+                        ImplicitHeatConduction.cpp
 )
 
-set(${target_name}_hpp  ExplicitHeatConduction.hpp
+set(${target_name}_hpp  SolverBase.hpp
+                        ExplicitHeatConduction.hpp
+                        ImplicitHeatConduction.hpp
 )
 
 add_library(${target_name}  STATIC)

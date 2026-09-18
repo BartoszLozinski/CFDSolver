@@ -1,4 +1,4 @@
-#include "ExplicitHeatConduction.hpp"
+#include "ImplicitHeatConduction.hpp"
 
 #include "../../Field/Field.hpp"
 #include "../../BoundaryCondition/Direchlet.hpp"
@@ -12,23 +12,26 @@
 #include <iostream>
 #include <limits>
 
+
 namespace Solver
 {
     namespace FiniteDifference
     {
-        namespace Explicit
+        namespace Implicit
         {
+
             HeatConduction::HeatConduction(const MaterialProperties& materialProperties_, const SimulationProperties& simulationProperties_)
                 : SolverBase(materialProperties_, simulationProperties_)
             {};
-
-            void HeatConduction::Solve(const Mesh& mesh, const std::string_view finalResultPath)
+            
+            void HeatConduction::Solve([[maybe_unused]] const Mesh& mesh, [[maybe_unused]] std::string_view finalResultPath)
             {
                 // TODO add boundary conditions to the setup file
                 // Probably mesh generator would have to create a mesh, store indicies
                 // and name specified indiecies for a boundaryCondition (also aligned if Neumann?)
                 // or maybe modify it when moved to FVM as BC should be applied at faces
                 
+                //to move to separate function
                 const double T_top = 373.0; // [K]
                 const double T_bottom = 273.0; // [K]
 
@@ -57,19 +60,10 @@ namespace Solver
                 auto& dt = simulationProperties.dt;
                 const auto alfa = materialProperties.thermalConductivity / (materialProperties.specificHeatCapacity * materialProperties.density);
                 
-                {
-                    const auto dx = mesh.dx;
-                    const auto dy = mesh.dy;
-                    const auto rx = alfa * dt / (dx * dx);
-                    const auto ry = alfa * dt / (dy * dy);
-
-                    if ((rx + ry) > 0.5)
-                    {
-                        std::cout << "Warning: The solution may be unstable. Timestep will be adjusted.\n";
-                        dt = 0.9 * dx * dx * dy * dy/ (2.0 * alfa * (dx * dx + dy * dy));
-                        std::cout << std::format("New timestep: {}\n", dt);            
-                    }
-                }
+                const auto dx = mesh.dx;
+                const auto dy = mesh.dy;
+                [[maybe_unused]] const auto rx = alfa * dt / (dx * dx);
+                [[maybe_unused]] const auto ry = alfa * dt / (dy * dy);
                 
                 auto Tprevious = T.grid;
                 Operators::Laplacian laplacian{ mesh.dx, mesh.dy, Tprevious };
@@ -82,6 +76,8 @@ namespace Solver
                     T.ApplyBoundaryCondition(bcTop, bcBottom, bcLeft, bcRight);
                     Tprevious = T.grid;
 
+                    //TODO implement main loop
+                    /*
                     static constexpr std::size_t ghostCellOffset = 1;
                     for (std::size_t xi = ghostCellOffset; xi <= mesh.nx; ++xi)
                     {
@@ -91,6 +87,7 @@ namespace Solver
                             maxResidual = std::max(maxResidual, std::abs(T.grid[xi][yi] - Tprevious[xi][yi]));
                         }
                     }
+                    */
 
                     if (simulationProperties.shouldExportResults && finalResultPath.empty() && timestep % simulationProperties.exportFrequency == 0)
                     {
@@ -98,7 +95,7 @@ namespace Solver
                         CSVExporter exporter;
                         exporter.Export(filename, T.grid);
                     }
-
+                    
                     ++timestep;                    
                 }
 
@@ -117,3 +114,4 @@ namespace Solver
         }
     }
 }
+
