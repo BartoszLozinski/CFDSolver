@@ -1,12 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "HeatConductionSolverTests.hpp"
+#include "ExplicitHeatConductionSolverTests.hpp"
+#include "ImplicitHeatConductionSolverTests.hpp"
 #include "MathOperatorsTests.hpp"
 #include "PropertiesReaderTests.hpp"
-
-// TODO add UT for 1D heat conduction solver
-// When applied solver stop condition at the steady state
-// Compare with analytical solution
 
 int main(int argc, char** argv)
 {
