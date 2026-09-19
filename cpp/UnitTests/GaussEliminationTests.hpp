@@ -8,8 +8,6 @@
 #include <vector>
 
 using Math::LinearAlgebra::DenseMatrix;
-using Math::LinearAlgebra::GaussElimination;
-
 TEST(GaussEliminationTests, SolvesLinearSystem)
 {
     const DenseMatrix matrix{
@@ -19,7 +17,8 @@ TEST(GaussEliminationTests, SolvesLinearSystem)
     };
     const std::vector<double> rhs{1.0, -2.0, 0.0};
 
-    const auto solution = GaussElimination(matrix, rhs);
+    Math::LinearAlgebra::GaussElimination solver{matrix};
+    const auto solution = solver.Solve(rhs);
 
     ASSERT_EQ(solution.size(), 3);
     EXPECT_NEAR(solution[0], 1.0, 1e-12);
@@ -35,7 +34,8 @@ TEST(GaussEliminationTests, SwapsRowsForAZeroDiagonalPivot)
     };
     const std::vector<double> rhs{4.0, 5.0};
 
-    const auto solution = GaussElimination(matrix, rhs);
+    Math::LinearAlgebra::GaussElimination solver{matrix};
+    const auto solution = solver.Solve(rhs);
 
     ASSERT_EQ(solution.size(), 2);
     EXPECT_NEAR(solution[0], -1.0, 1e-12);
@@ -49,7 +49,9 @@ TEST(GaussEliminationTests, RejectsRhsWithWrongNumberOfRows)
         {0.0, 1.0}
     };
 
-    EXPECT_THROW(GaussElimination(matrix, {1.0}), std::invalid_argument);
+    Math::LinearAlgebra::GaussElimination solver{matrix};
+
+    EXPECT_THROW(solver.Solve({1.0}), std::invalid_argument);
 }
 
 TEST(GaussEliminationTests, RejectsNonSquareMatrix)
@@ -59,7 +61,9 @@ TEST(GaussEliminationTests, RejectsNonSquareMatrix)
         {4.0, 5.0, 6.0}
     };
 
-    EXPECT_THROW(GaussElimination(matrix, {1.0, 2.0}), std::invalid_argument);
+    Math::LinearAlgebra::GaussElimination solver{matrix};
+
+    EXPECT_THROW(solver.Solve({1.0, 2.0}), std::invalid_argument);
 }
 
 TEST(GaussEliminationTests, RejectsSingularMatrix)
@@ -69,5 +73,7 @@ TEST(GaussEliminationTests, RejectsSingularMatrix)
         {2.0, 4.0}
     };
 
-    EXPECT_THROW(GaussElimination(matrix, {3.0, 6.0}), std::runtime_error);
+    Math::LinearAlgebra::GaussElimination solver{matrix};
+
+    EXPECT_THROW(solver.Solve({3.0, 6.0}), std::runtime_error);
 }

@@ -1,15 +1,23 @@
 #pragma once
 
 #include <vector>
+#include "ISolver.hpp"
 
 namespace Math
 {
     namespace LinearAlgebra
     {
-        using DenseMatrix = std::vector<std::vector<double>>;
-        
-        // for now standalone function
-        // will abstract if more solvers are added (i.e Gauss-Seidel)
-        std::vector<double> GaussElimination(DenseMatrix matrix, std::vector<double> rhs, const double pivotTolerance = 1e-12);
+        class GaussElimination : public ISolver
+        {
+        private:
+            double pivotTolerance = 1e-12;
+            void Validate(const DenseMatrix& matrix, const std::vector<double>& rhs) const;
+
+        public:
+            GaussElimination(DenseMatrix matrix_);
+
+            RhsType Solve(RhsType rhs) override final;
+
+        };
     }
 }
