@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "ExplicitHeatConductionSolverTests.hpp"
+#include "GaussEliminationTests.hpp"
 #include "ImplicitHeatConductionSolverTests.hpp"
 #include "MathOperatorsTests.hpp"
 #include "PropertiesReaderTests.hpp"
