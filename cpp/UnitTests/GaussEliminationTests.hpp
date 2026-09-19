@@ -26,6 +26,27 @@ TEST(GaussEliminationTests, SolvesLinearSystem)
     EXPECT_NEAR(solution[2], -2.0, 1e-12);
 }
 
+TEST(GaussEliminationTests, ReusesFactorizationForMultipleRhsVectors)
+{
+    const DenseMatrix matrix{
+        {3.0, 2.0, -1.0},
+        {2.0, -2.0, 4.0},
+        {-1.0, 0.5, -1.0}
+    };
+
+    Math::LinearAlgebra::GaussElimination solver{matrix};
+
+    const auto firstSolution = solver.Solve({1.0, -2.0, 0.0});
+    const auto secondSolution = solver.Solve({5.0, 14.0, -4.5});
+
+    EXPECT_NEAR(firstSolution[0], 1.0, 1e-12);
+    EXPECT_NEAR(firstSolution[1], -2.0, 1e-12);
+    EXPECT_NEAR(firstSolution[2], -2.0, 1e-12);
+    EXPECT_NEAR(secondSolution[0], 2.0, 1e-12);
+    EXPECT_NEAR(secondSolution[1], 1.0, 1e-12);
+    EXPECT_NEAR(secondSolution[2], 3.0, 1e-12);
+}
+
 TEST(GaussEliminationTests, SwapsRowsForAZeroDiagonalPivot)
 {
     const DenseMatrix matrix{
@@ -61,9 +82,7 @@ TEST(GaussEliminationTests, RejectsNonSquareMatrix)
         {4.0, 5.0, 6.0}
     };
 
-    Math::LinearAlgebra::GaussElimination solver{matrix};
-
-    EXPECT_THROW(solver.Solve({1.0, 2.0}), std::invalid_argument);
+    EXPECT_THROW(Math::LinearAlgebra::GaussElimination solver{matrix}, std::invalid_argument);
 }
 
 TEST(GaussEliminationTests, RejectsSingularMatrix)
@@ -73,7 +92,5 @@ TEST(GaussEliminationTests, RejectsSingularMatrix)
         {2.0, 4.0}
     };
 
-    Math::LinearAlgebra::GaussElimination solver{matrix};
-
-    EXPECT_THROW(solver.Solve({3.0, 6.0}), std::runtime_error);
+    EXPECT_THROW(Math::LinearAlgebra::GaussElimination solver{matrix}, std::runtime_error);
 }

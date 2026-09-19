@@ -10,8 +10,14 @@ namespace Math
         class GaussElimination : public ISolver
         {
         private:
-            double pivotTolerance = 1e-12;
-            void Validate(const DenseMatrix& matrix, const std::vector<double>& rhs) const;
+            static constexpr double pivotTolerance = 1e-12;
+            DenseMatrix lower;
+            DenseMatrix upper;
+            std::vector<std::size_t> permutation;
+
+            void ValidateMatrix() const;
+            void FactorizeMatrix();
+            void ValidateRhs(const RhsType& rhs) const;
 
         public:
             GaussElimination(DenseMatrix matrix_);

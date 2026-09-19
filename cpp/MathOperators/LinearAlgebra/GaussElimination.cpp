@@ -11,81 +11,105 @@ namespace Math
     {
         GaussElimination::GaussElimination(DenseMatrix matrix_)
             : ISolver(matrix_)
-        {};
-
-
-        void GaussElimination::Validate(const DenseMatrix& matrix, const std::vector<double>& rhs) const
+            , lower(matrix_.size(), std::vector<double>(matrix_.size(), 0.0))
+            , upper(std::move(matrix_))
+            , permutation(upper.size())
         {
-            if (matrix.size() != rhs.size())
-                throw std::invalid_argument("Matrix rows needs to match RHS size!");
+            ValidateMatrix();
 
-            if (std::ranges::any_of(matrix, [&](const auto& row){
-                return row.size() != matrix.size(); 
+            for (std::size_t row = 0; row < permutation.size(); ++row)
+            {
+                permutation[row] = row;
+                lower[row][row] = 1.0;
+            }
+
+            FactorizeMatrix();
+        };
+
+
+        void GaussElimination::ValidateMatrix() const
+        {
+            if (std::ranges::any_of(upper, [&](const auto& row){
+                return row.size() != upper.size(); 
             }))
             {
                 throw std::invalid_argument("Matrix needs to be square!");
             }
         }
 
-        RhsType GaussElimination::Solve(RhsType rhs)
+        void GaussElimination::FactorizeMatrix()
         {
-            Validate(matrix, rhs);
-
-            // TODO - for iterative solver i would use same matrix all the time
-            // maybe it should store prepared matrix
-            // instead of rearranging it all the time
-
             // current diagonal position
-            for (std::size_t pivot = 0; pivot < matrix.size(); ++pivot)
+            for (std::size_t pivot = 0; pivot < upper.size(); ++pivot)
             {
                 // best pivot row
                 auto pivotRow = pivot;
-                for (std::size_t row = pivot + 1; row < matrix.size(); ++row)
+                for (std::size_t row = pivot + 1; row < upper.size(); ++row)
                 {
-                    if (std::abs(matrix[row][pivot]) > std::abs(matrix[pivotRow][pivot]))
+                    if (std::abs(upper[row][pivot]) > std::abs(upper[pivotRow][pivot]))
                         pivotRow = row;
                 }
 
-                if (std::abs(matrix[pivotRow][pivot]) < pivotTolerance)
+                if (std::abs(upper[pivotRow][pivot]) < pivotTolerance)
                     throw std::runtime_error("Matrix is singular");
 
-                std::swap(matrix[pivot], matrix[pivotRow]); // moving best pivoting row into current pivot row (to be diagonal)
-                std::swap(rhs[pivot], rhs[pivotRow]);
+                std::swap(upper[pivot], upper[pivotRow]); // moving best pivoting row into current pivot row (to be diagonal)
+                std::swap(permutation[pivot], permutation[pivotRow]);
+
+                for (std::size_t column = 0; column < pivot; ++column)
+                    std::swap(lower[pivot][column], lower[pivotRow][column]);
 
                 // elimination algorithm
-                for (std::size_t row = pivot + 1; row < matrix.size(); ++row)
+                for (std::size_t row = pivot + 1; row < upper.size(); ++row)
                 {
-                    const auto factor = matrix[row][pivot] / matrix[pivot][pivot];
-                    matrix[row][pivot] = 0.0; // reduction of numerical noise
-                    // mathematically it would be exactly as below, but would have small rounding errors due floating point arithmethics
-                    // then loop would start with column = pivot
+                    const auto factor = upper[row][pivot] / upper[pivot][pivot];
+                    lower[row][pivot] = factor; // store factor for forward substitution
+                    upper[row][pivot] = 0.0;
 
                     // calculating rest of row elements
-                    for (std::size_t column = pivot + 1; column < matrix.size(); ++column)
-                        matrix[row][column] -= factor * matrix[pivot][column];
-
-                    rhs[row] -= factor * rhs[pivot];
+                    for (std::size_t column = pivot + 1; column < upper.size(); ++column)
+                        upper[row][column] -= factor * upper[pivot][column];
                 }
             }
+        }
 
-            // back substitution after gauss elimination into upper-triangular
-            RhsType solution(rhs.size(), 0.0);
-            for (std::size_t row = rhs.size(); row-- > 0;)
+        void GaussElimination::ValidateRhs(const RhsType& rhs) const
+        {
+            if (upper.size() != rhs.size())
+                throw std::invalid_argument("Matrix rows needs to match RHS size!");
+        }
+
+        RhsType GaussElimination::Solve(RhsType rhs)
+        {
+            ValidateRhs(rhs);
+
+            RhsType permutedRhs(rhs.size());
+            for (std::size_t row = 0; row < rhs.size(); ++row)
+                permutedRhs[row] = rhs[permutation[row]];
+
+            // Forward substitution: solve L * y = P * rhs.
+            for (std::size_t pivot = 0; pivot < lower.size(); ++pivot)
+            {
+                for (std::size_t row = pivot + 1; row < lower.size(); ++row)
+                    permutedRhs[row] -= lower[row][pivot] * permutedRhs[pivot];
+            }
+
+            // Back substitution: solve U * solution = y.
+            RhsType solution(upper.size(), 0.0);
+            for (std::size_t row = upper.size(); row-- > 0;)
             {
                 // value = rhs[row]
                 //       - sum(matrix[row][column] * solution[column])
                 //       for column > row
 
-                auto value = rhs[row];
-                for (std::size_t column = row + 1; column < rhs.size(); ++column)
-                    value -= matrix[row][column] * solution[column];
+                auto value = permutedRhs[row];
+                for (std::size_t column = row + 1; column < upper.size(); ++column)
+                    value -= upper[row][column] * solution[column];
 
-                solution[row] = value / matrix[row][row];
+                solution[row] = value / upper[row][row];
             }
 
             return solution;
         }
-
-
     }
 }
