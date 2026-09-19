@@ -71,6 +71,7 @@ namespace Solver
                 return matrix;
             }
 
+            // lets try also with gauss seidel method
             std::vector<double> SolveLinearSystem(HeatConduction::DenseMatrix matrix, std::vector<double> rhs)
             {
                 static constexpr double pivotTolerance = 1e-12;
