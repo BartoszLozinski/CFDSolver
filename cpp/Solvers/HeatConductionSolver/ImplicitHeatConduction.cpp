@@ -3,6 +3,7 @@
 #include "../../BoundaryCondition/Direchlet.hpp"
 #include "../../BoundaryCondition/Neumann.hpp"
 #include "../../Field/Field.hpp"
+#include "../../MathOperators/LinearAlgebra/GaussElimination.hpp"
 #include "../../ResultsExporter/CSVExporter.hpp"
 
 #include <algorithm>
@@ -71,51 +72,6 @@ namespace Solver
                 return matrix;
             }
 
-            // lets try also with gauss seidel method
-            std::vector<double> SolveLinearSystem(HeatConduction::DenseMatrix matrix, std::vector<double> rhs)
-            {
-                static constexpr double pivotTolerance = 1e-12;
-
-                for (std::size_t pivot = 0; pivot < rhs.size(); ++pivot)
-                {
-                    auto pivotRow = pivot;
-                    for (std::size_t row = pivot + 1; row < rhs.size(); ++row)
-                    {
-                        if (std::abs(matrix[row][pivot]) > std::abs(matrix[pivotRow][pivot]))
-                            pivotRow = row;
-                    }
-
-                    if (std::abs(matrix[pivotRow][pivot]) < pivotTolerance)
-                        throw std::runtime_error("Implicit heat-conduction matrix is singular.");
-
-                    std::swap(matrix[pivot], matrix[pivotRow]);
-                    std::swap(rhs[pivot], rhs[pivotRow]);
-
-                    for (std::size_t row = pivot + 1; row < rhs.size(); ++row)
-                    {
-                        const auto factor = matrix[row][pivot] / matrix[pivot][pivot];
-                        matrix[row][pivot] = 0.0;
-
-                        for (std::size_t column = pivot + 1; column < rhs.size(); ++column)
-                            matrix[row][column] -= factor * matrix[pivot][column];
-
-                        rhs[row] -= factor * rhs[pivot];
-                    }
-                }
-
-                std::vector<double> solution(rhs.size(), 0.0);
-                for (std::size_t row = rhs.size(); row-- > 0;)
-                {
-                    auto value = rhs[row];
-                    for (std::size_t column = row + 1; column < rhs.size(); ++column)
-                        value -= matrix[row][column] * solution[column];
-
-                    solution[row] = value / matrix[row][row];
-                }
-
-                return solution;
-            }
-
             void HeatConduction::Solve(const Mesh& mesh, const std::string_view finalResultPath)
             {
                 // TODO add boundary conditions to the setup file
@@ -159,6 +115,7 @@ namespace Solver
                 const auto rx = alfa * dt / (dx * dx);
                 const auto ry = alfa * dt / (dy * dy);
                 const auto matrix = BuildMatrix(mesh, rx, ry);
+                Math::LinearAlgebra::GaussElimination linearSolver{ matrix };
 
                 double maxResidual = std::numeric_limits<double>::infinity();
                 std::size_t timestep = 0;
@@ -187,7 +144,7 @@ namespace Solver
                         }
                     }
 
-                    const auto solution = SolveLinearSystem(matrix, std::move(rhs));
+                    const auto solution = linearSolver.Solve(std::move(rhs));
                     for (std::size_t xi = ghostCellOffset; xi <= mesh.nx; ++xi)
                     {
                         for (std::size_t yi = ghostCellOffset; yi <= mesh.ny; ++yi)
@@ -197,9 +154,6 @@ namespace Solver
                             T.grid[xi][yi] = value;
                         }
                     }
-
-                    // Refresh ghost cells before exporting and before the next step.
-                    T.ApplyBoundaryCondition(bcTop, bcBottom, bcLeft, bcRight);
 
                     if (simulationProperties.shouldExportResults && finalResultPath.empty() && timestep % simulationProperties.exportFrequency == 0)
                     {
@@ -211,6 +165,9 @@ namespace Solver
                     ++timestep;
                 }
 
+                // Refresh ghost cells before exporting and before the next step.
+                T.ApplyBoundaryCondition(bcTop, bcBottom, bcLeft, bcRight);
+                
                 // TODO add result export to the separate class and lib
                 std::cout << std::format("Finished after {} timesteps ({} [s])\n", timestep, timestep * dt);
 
