@@ -3,7 +3,7 @@
 #include "../../BoundaryCondition/Direchlet.hpp"
 #include "../../BoundaryCondition/Neumann.hpp"
 #include "../../Field/Field.hpp"
-#include "../../MathOperators/LinearAlgebra/GaussElimination.hpp"
+#include "../../MathOperators/LinearAlgebra/GaussSeidel.hpp"
 #include "../../ResultsExporter/CSVExporter.hpp"
 
 #include <algorithm>
@@ -115,10 +115,12 @@ namespace Solver
                 const auto rx = alfa * dt / (dx * dx);
                 const auto ry = alfa * dt / (dy * dy);
                 const auto matrix = BuildMatrix(mesh, rx, ry);
-                Math::LinearAlgebra::GaussElimination linearSolver{ matrix };
+                Math::LinearAlgebra::GaussSeidel solver{ matrix, 1e-3 };
 
                 double maxResidual = std::numeric_limits<double>::infinity();
                 std::size_t timestep = 0;
+
+                Math::LinearAlgebra::RhsType solution(mesh.nx * mesh.ny, T_initInternal);
 
                 while (timestep < simulationProperties.timesteps && maxResidual >= simulationProperties.tolerance)
                 {
@@ -128,7 +130,7 @@ namespace Solver
                     // The matrix contains only physical-cell unknowns. Ghost
                     // cells are applied to T before forming the previous field.
                     const auto previous = T.grid;
-                    std::vector<double> rhs(mesh.nx * mesh.ny, 0.0);
+                    Math::LinearAlgebra::RhsType rhs(mesh.nx * mesh.ny, 0.0);
 
                     for (std::size_t xi = ghostCellOffset; xi <= mesh.nx; ++xi)
                     {
@@ -144,7 +146,7 @@ namespace Solver
                         }
                     }
 
-                    const auto solution = linearSolver.Solve(std::move(rhs));
+                    solution = solver.Solve(rhs, solution);
                     for (std::size_t xi = ghostCellOffset; xi <= mesh.nx; ++xi)
                     {
                         for (std::size_t yi = ghostCellOffset; yi <= mesh.ny; ++yi)
