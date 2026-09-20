@@ -3,53 +3,35 @@
 #include "gtest/gtest.h"
 
 #include "MathOperators/LinearAlgebra/GaussElimination.hpp"
+#include "LinearSystemTestData.hpp"
 
 #include <stdexcept>
-#include <vector>
-
-using Math::LinearAlgebra::DenseMatrix;
 TEST(GaussEliminationTests, SolvesLinearSystem)
 {
-    const DenseMatrix matrix{
-        {3.0, 2.0, -1.0},
-        {2.0, -2.0, 4.0},
-        {-1.0, 0.5, -1.0}
-    };
-    const std::vector<double> rhs{1.0, -2.0, 0.0};
+    Math::LinearAlgebra::GaussElimination solver{LinearSystemTestData::matrix};
+    const auto result = solver.Solve(LinearSystemTestData::rhs);
 
-    Math::LinearAlgebra::GaussElimination solver{matrix};
-    const auto solution = solver.Solve(rhs);
-
-    ASSERT_EQ(solution.size(), 3);
-    EXPECT_NEAR(solution[0], 1.0, 1e-12);
-    EXPECT_NEAR(solution[1], -2.0, 1e-12);
-    EXPECT_NEAR(solution[2], -2.0, 1e-12);
+    ASSERT_EQ(result.size(), LinearSystemTestData::solution.size());
+    for (std::size_t index = 0; index < result.size(); ++index)
+        EXPECT_NEAR(result[index], LinearSystemTestData::solution[index], 1e-12);
 }
 
 TEST(GaussEliminationTests, ReusesFactorizationForMultipleRhsVectors)
 {
-    const DenseMatrix matrix{
-        {3.0, 2.0, -1.0},
-        {2.0, -2.0, 4.0},
-        {-1.0, 0.5, -1.0}
-    };
+    Math::LinearAlgebra::GaussElimination solver{LinearSystemTestData::matrix};
 
-    Math::LinearAlgebra::GaussElimination solver{matrix};
+    const auto firstSolution = solver.Solve(LinearSystemTestData::rhs);
+    const auto secondSolution = solver.Solve(LinearSystemTestData::secondRhs);
 
-    const auto firstSolution = solver.Solve({1.0, -2.0, 0.0});
-    const auto secondSolution = solver.Solve({5.0, 14.0, -4.5});
-
-    EXPECT_NEAR(firstSolution[0], 1.0, 1e-12);
-    EXPECT_NEAR(firstSolution[1], -2.0, 1e-12);
-    EXPECT_NEAR(firstSolution[2], -2.0, 1e-12);
-    EXPECT_NEAR(secondSolution[0], 2.0, 1e-12);
-    EXPECT_NEAR(secondSolution[1], 1.0, 1e-12);
-    EXPECT_NEAR(secondSolution[2], 3.0, 1e-12);
+    for (std::size_t index = 0; index < firstSolution.size(); ++index)
+        EXPECT_NEAR(firstSolution[index], LinearSystemTestData::solution[index], 1e-12);
+    for (std::size_t index = 0; index < secondSolution.size(); ++index)
+        EXPECT_NEAR(secondSolution[index], LinearSystemTestData::secondSolution[index], 1e-12);
 }
 
 TEST(GaussEliminationTests, SwapsRowsForAZeroDiagonalPivot)
 {
-    const DenseMatrix matrix{
+    const Math::LinearAlgebra::DenseMatrix matrix{
         {0.0, 2.0},
         {1.0, 3.0}
     };
@@ -65,7 +47,7 @@ TEST(GaussEliminationTests, SwapsRowsForAZeroDiagonalPivot)
 
 TEST(GaussEliminationTests, RejectsRhsWithWrongNumberOfRows)
 {
-    const DenseMatrix matrix{
+    const Math::LinearAlgebra::DenseMatrix matrix{
         {1.0, 0.0},
         {0.0, 1.0}
     };
@@ -77,7 +59,7 @@ TEST(GaussEliminationTests, RejectsRhsWithWrongNumberOfRows)
 
 TEST(GaussEliminationTests, RejectsNonSquareMatrix)
 {
-    const DenseMatrix matrix{
+    const Math::LinearAlgebra::DenseMatrix matrix{
         {1.0, 2.0, 3.0},
         {4.0, 5.0, 6.0}
     };
@@ -87,7 +69,7 @@ TEST(GaussEliminationTests, RejectsNonSquareMatrix)
 
 TEST(GaussEliminationTests, RejectsSingularMatrix)
 {
-    const DenseMatrix matrix{
+    const Math::LinearAlgebra::DenseMatrix matrix{
         {1.0, 2.0},
         {2.0, 4.0}
     };

@@ -2,6 +2,7 @@
 
 #include "ExplicitHeatConductionSolverTests.hpp"
 #include "GaussEliminationTests.hpp"
+#include "GaussSeidelTests.hpp"
 #include "ImplicitHeatConductionSolverTests.hpp"
 #include "MathOperatorsTests.hpp"
 #include "PropertiesReaderTests.hpp"

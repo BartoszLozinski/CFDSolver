@@ -115,7 +115,7 @@ namespace Solver
                 const auto rx = alfa * dt / (dx * dx);
                 const auto ry = alfa * dt / (dy * dy);
                 const auto matrix = BuildMatrix(mesh, rx, ry);
-                Math::LinearAlgebra::GaussSeidel solver{ matrix, 1e-3 };
+                Math::LinearAlgebra::GaussSeidel solver{ matrix, 1e-6, 10 };
 
                 double maxResidual = std::numeric_limits<double>::infinity();
                 std::size_t timestep = 0;

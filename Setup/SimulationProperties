@@ -3,5 +3,5 @@
     shouldExportResults     true
     exportFrequency         200
     timesteps               2000
-    tolerance               1e-6
+    tolerance               1e-4
 }
