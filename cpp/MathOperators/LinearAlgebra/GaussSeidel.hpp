@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ISolver.hpp"
+#include "ListOfLists.hpp"
 
 namespace Math
 {
@@ -19,7 +20,7 @@ namespace Math
             GaussSeidel(DenseMatrix matrix_, const double tolerance_ = 1e-6, const std::size_t maxIterations_ = 10);
 
             RhsType Solve(const RhsType& rhs, const RhsType& initialGuess) override final;
-
+            RhsType Solve(const SparseMatrix::ListOfLists& sparseMatrix, const RhsType& rhs, const RhsType& initialGuess) const;
         };
     }
 }

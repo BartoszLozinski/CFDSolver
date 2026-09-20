@@ -2,10 +2,13 @@ set(target_name MathOperators)
 
 set(${target_name}_src  Laplacian.cpp
                         LinearAlgebra/GaussElimination.cpp
-                        LinearAlgebra/GaussSeidel.cpp)
+                        LinearAlgebra/GaussSeidel.cpp
+                        LinearAlgebra/ListOfLists.cpp)
+
 set(${target_name}_hpp  Laplacian.hpp
                         LinearAlgebra/GaussElimination.hpp
-                        LinearAlgebra/GaussSeidel.hpp)
+                        LinearAlgebra/GaussSeidel.hpp
+                        LinearAlgebra/ListOfLists.hpp)
 
 add_library(${target_name}  STATIC)
 

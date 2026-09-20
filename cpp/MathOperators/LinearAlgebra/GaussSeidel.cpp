@@ -80,5 +80,45 @@ namespace Math
 
             return solution;
         }
+
+        RhsType GaussSeidel::Solve(const SparseMatrix::ListOfLists& sparseMatrix, const RhsType& rhs, const RhsType& initialGuess) const
+        {
+            ValidateRhs(rhs);
+            ValidateRhs(initialGuess);
+            auto solution = initialGuess; //initial guess with 0
+
+            std::size_t iteration = 0;
+
+            // todo make calculate residual use sparse matrix
+            // move whole class to use sparse matrix
+            while (iteration < maxIterations && CalculateResidual(solution, rhs) > tolerance)
+            {
+                for (std::size_t row = 0; row < sparseMatrix.size(); ++row)
+                {
+                    double value = rhs[row];
+
+                    for (const auto& entry : sparseMatrix[row])
+                    {
+                        if (entry.column != row)
+                            value -= entry.value * solution[entry.column];
+                    }
+
+                    /*
+                    for (std::size_t column = 0; column < matrix.size(); ++column)
+                    {
+                        if ((column != row))
+                            value -= matrix[row][column] * solution[column];
+                    }
+                    */
+
+                    // make to use sparse matrix
+                    solution[row] = value / matrix[row][row];
+                }
+
+                ++iteration;
+            }
+
+            return solution;
+        }
     }
 }

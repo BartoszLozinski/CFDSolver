@@ -4,6 +4,7 @@
 #include "../../BoundaryCondition/Neumann.hpp"
 #include "../../Field/Field.hpp"
 #include "../../MathOperators/LinearAlgebra/GaussSeidel.hpp"
+#include "../../MathOperators/LinearAlgebra/ListOfLists.hpp"
 #include "../../ResultsExporter/CSVExporter.hpp"
 
 #include <algorithm>
@@ -115,6 +116,7 @@ namespace Solver
                 const auto rx = alfa * dt / (dx * dx);
                 const auto ry = alfa * dt / (dy * dy);
                 const auto matrix = BuildMatrix(mesh, rx, ry);
+                const auto sparseMatrix = SparseMatrix::GetLilSparseMatrix(matrix);
                 Math::LinearAlgebra::GaussSeidel solver{ matrix, 1e-6, 10 };
 
                 double maxResidual = std::numeric_limits<double>::infinity();
@@ -146,7 +148,7 @@ namespace Solver
                         }
                     }
 
-                    solution = solver.Solve(rhs, solution);
+                    solution = solver.Solve(sparseMatrix, rhs, solution);
                     for (std::size_t xi = ghostCellOffset; xi <= mesh.nx; ++xi)
                     {
                         for (std::size_t yi = ghostCellOffset; yi <= mesh.ny; ++yi)
