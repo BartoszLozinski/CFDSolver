@@ -16,6 +16,7 @@ namespace Operators
             throw std::invalid_argument(std::format("absolute value of dx {} or dy {} is smaller then allowed {}.", dx, dy, epsilon));
     }
 
+    //TODO prepare same operator for matrix
     double Laplacian::operator()(const std::size_t ix, const std::size_t iy) const
     {
         if (ix < 1 || iy < 1 || (ix >= grid.size() - 1) || (iy >= grid.at(0).size() - 1))
