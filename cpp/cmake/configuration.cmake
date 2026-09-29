@@ -1,9 +1,17 @@
 function(configure_target target)
 
+    set(options HEADER_ONLY)
+    cmake_parse_arguments(ARG "${options}" "" "" ${ARGN})
+
+    if (ARG_HEADER_ONLY)
+        set(ACCESS_TYPE INTERFACE)
+    else()
+        set(ACCESS_TYPE PRIVATE)
+    endif()
 
     # Static libs for now, to be extended for header only interfaces
     target_compile_options(${target}
-        PRIVATE
+        ${ACCESS_TYPE}
             -Wall
             -Wextra
             -Werror
@@ -32,15 +40,25 @@ function(configure_library target)
     cmake_parse_arguments(ARG "${options}" "" "${multiValueArgs}" ${ARGN})
     cmake_path(GET CMAKE_CURRENT_SOURCE_DIR     PARENT_PATH     parent_dir)
 
-    add_library(${target} STATIC)
-    target_sources(${target}
-        PRIVATE
-            ${ARG_SOURCES}
-        PUBLIC
+    if (ARG_HEADER_ONLY)
+        add_library(${target} INTERFACE)
+        target_sources(${target}
+        INTERFACE
             FILE_SET HEADERS
             BASE_DIRS ${parent_dir}
             FILES ${ARG_HEADERS}
-    )
-
+        )
+    else()
+        add_library(${target} STATIC)
+        target_sources(${target}
+            PRIVATE
+                ${ARG_SOURCES}
+            PUBLIC
+                FILE_SET HEADERS
+                BASE_DIRS ${parent_dir}
+                FILES ${ARG_HEADERS}
+        )
+    endif()
+    
 
 endfunction()
