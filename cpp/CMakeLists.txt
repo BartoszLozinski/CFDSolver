@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.28)
 project(CFDSolver)
 
+include(${CMAKE_SOURCE_DIR}/cmake/configuration.cmake)
+
 set(CMAKE_CXX_COMPILER clang++-18)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -29,15 +31,4 @@ target_link_libraries(${PROJECT_NAME}
         PropertiesReader
 )
 
-target_compile_options(${PROJECT_NAME}
-    PRIVATE
-        ${CORE_FLAGS}
-        $<$<CONFIG:DEBUG>: -Og -g>
-        $<$<CONFIG:RELEASE>: -O3>
-)
-
-set_target_properties(${PROJECT_NAME}
-    PROPERTIES
-        CXX_STANDARD 20
-        CXX_STANDARD_REQUIRED ON
-)
+configure_target(${PROJECT_NAME})
