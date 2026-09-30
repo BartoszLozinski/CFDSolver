@@ -21,6 +21,7 @@ add_subdirectory(Properties)
 add_subdirectory(PropertiesReader)
 add_subdirectory(Solvers)
 add_subdirectory(ResultsExporter)
+add_subdirectory(PrototypingParallelization)
 
 add_subdirectory(UnitTests)
 

@@ -11,6 +11,7 @@
 #include <format>
 #include <iostream>
 #include <limits>
+#include <thread>
 
 namespace Solver
 {
@@ -75,6 +76,7 @@ namespace Solver
                 Operators::Laplacian laplacian{ mesh.dx, mesh.dy, Tprevious };
                 double maxResidual = std::numeric_limits<double>::infinity();
                 std::size_t timestep = 0;
+                static constexpr std::size_t ghostCellOffset = 1;
 
                 while (timestep < simulationProperties.timesteps && maxResidual >= simulationProperties.tolerance)
                 {
@@ -82,7 +84,6 @@ namespace Solver
                     T.ApplyBoundaryCondition(bcTop, bcBottom, bcLeft, bcRight);
                     Tprevious = T.grid;
 
-                    static constexpr std::size_t ghostCellOffset = 1;
                     for (std::size_t xi = ghostCellOffset; xi <= mesh.nx; ++xi)
                     {
                         for (std::size_t yi = ghostCellOffset; yi <= mesh.ny; ++yi)
