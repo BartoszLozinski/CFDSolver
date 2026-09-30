@@ -1,7 +1,13 @@
 #include "Parallel.hpp"
 
+#include <algorithm>
+#include <stdexcept>
+
 RowWorkerPool::RowWorkerPool(const std::size_t workerCount)
 {
+    if (workerCount == 0)
+        throw std::invalid_argument("RowWorkerPool requires at least one worker");
+
     workers.reserve(workerCount);
 
     for (std::size_t workerId = 0; workerId < workerCount; ++workerId)
@@ -10,6 +16,12 @@ RowWorkerPool::RowWorkerPool(const std::size_t workerCount)
 
 RowWorkerPool::~RowWorkerPool()
 {
+    {
+        std::lock_guard lock{workersRemainingMutex};
+        stopping = true;
+    }
+    workAvailable.notify_all();
+
     for (auto& worker : workers)
         worker.join();
 }
@@ -18,35 +30,53 @@ void RowWorkerPool::WorkerLoop(const std::size_t workerId)
 {
     std::size_t observedGeneration = 0;
 
+    while (true)
     {
-        std::unique_lock lock{workersRemainingMutex};
-        workAvailable.wait(lock, [this, &observedGeneration]
+        RowTask task;
+        std::size_t firstRow{};
+        std::size_t lastRow{};
         {
-            return poolGeneration != observedGeneration;
-        });
+            std::unique_lock lock{workersRemainingMutex};
+            workAvailable.wait(lock, [this, &observedGeneration]
+            {
+                return stopping || poolGeneration != observedGeneration;
+            });
 
-        observedGeneration = poolGeneration;
+            if (stopping)
+                return;
+
+            observedGeneration = poolGeneration;
+            firstRow = startRow;
+            lastRow = endRow;
+            task = currentTask;
+        }
+
+        const auto rowCount = lastRow - firstRow;
+        const auto baseRowsCount = rowCount / workers.size();
+        const auto extraCounts = rowCount % workers.size();
+        const auto start = firstRow + workerId * baseRowsCount + std::min(workerId, extraCounts);
+        const auto end = start + baseRowsCount + (workerId < extraCounts ? 1 : 0);
+
+        task(workerId, start, end);
+
+        bool allWorkersFinished = false;
+        {
+            std::lock_guard lock{workersRemainingMutex};
+            allWorkersFinished = --workersRemaining == 0;
+        }
+
+        if (allWorkersFinished)
+            workFinished.notify_one();
     }
-
-    const auto baseRowsCount = (endRow - startRow) / workers.size();
-    const auto extraCounts = (endRow - startRow) % workers.size();
-    const auto start = workerId * baseRowsCount + std::min(workerId, extraCounts); //to handle modulos
-    const auto end = start + baseRowsCount + (workerId < extraCounts ? 1 : 0); //add end index to first workers
-
-    currentTask(workerId, start, end);
-
-    std::lock_guard lock{workersRemainingMutex};
-    --workersRemaining;
-
-    if (workersRemaining == 0)
-        workFinished.notify_one();
 }
 
 void RowWorkerPool::ParallelForRows(const std::size_t firstRow, const std::size_t endRow, const RowTask& task)
 {
-    currentTask = task;
-    
     std::unique_lock lock{workersRemainingMutex};
+    if (endRow < firstRow)
+        throw std::invalid_argument("endRow must not be less than firstRow");
+
+    currentTask = task;
     startRow = firstRow;
     this->endRow = endRow;
     workersRemaining = workers.size();

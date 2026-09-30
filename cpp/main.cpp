@@ -18,7 +18,6 @@ int main()
     const auto mesh = MeshGenerator{}.GenerateMesh(MeshPropertiesReader{}.ReadFromSetupFile("Setup/MeshProperties"));
     const auto simulationProperties = SimulationPropertiesReader{}.ReadFromSetupFile("Setup/SimulationProperties");
     
-    /*
     Solver::FiniteDifference::Explicit::HeatConduction explicitSolver{ materialProperties, simulationProperties };
     
     auto start = Clock::now();
@@ -27,9 +26,9 @@ int main()
 
     std::chrono::duration<double> elapsed = end - start;
     std::cout << std::format("Time elapsed for explicit solver: {} [s]\n", elapsed.count());
-    */
 
-    
+
+/*  
     Solver::FiniteDifference::Implicit::HeatConduction implicitSolver{ materialProperties, simulationProperties };
 
     auto start = Clock::now();
@@ -38,7 +37,7 @@ int main()
 
     std::chrono::duration<double> elapsed = end - start;
     std::cout << std::format("Time elapsed for implicit solver: {} [s]\n", elapsed.count());
-
+*/
     
     return 0;
 };

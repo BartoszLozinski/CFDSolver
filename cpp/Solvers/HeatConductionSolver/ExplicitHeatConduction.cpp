@@ -5,13 +5,13 @@
 #include "../../BoundaryCondition/Neumann.hpp"
 #include "../../MathOperators/Laplacian.hpp"
 #include "../../ResultsExporter/CSVExporter.hpp"
+#include "../../PrototypingParallelization/Parallel.hpp"
 
 #include <algorithm>
 #include <cmath>
 #include <format>
 #include <iostream>
 #include <limits>
-#include <thread>
 
 namespace Solver
 {
@@ -77,6 +77,16 @@ namespace Solver
                 double maxResidual = std::numeric_limits<double>::infinity();
                 std::size_t timestep = 0;
                 static constexpr std::size_t ghostCellOffset = 1;
+                RowWorkerPool workers{1};
+
+                const auto calculateRange = [&](const std::size_t startX, const std::size_t endX)
+                {
+                    for (std::size_t xi = startX; xi < endX; ++xi)
+                    {
+                        for (std::size_t yi = ghostCellOffset; yi <= mesh.ny; ++yi)
+                            T.grid[xi][yi] = Tprevious[xi][yi] + alfa * dt * laplacian(xi, yi);
+                    }
+                };
 
                 while (timestep < simulationProperties.timesteps && maxResidual >= simulationProperties.tolerance)
                 {
@@ -84,13 +94,18 @@ namespace Solver
                     T.ApplyBoundaryCondition(bcTop, bcBottom, bcLeft, bcRight);
                     Tprevious = T.grid;
 
+                    workers.ParallelForRows(
+                        ghostCellOffset,
+                        static_cast<std::size_t>(mesh.nx) + 1,
+                        [&](const std::size_t, const std::size_t startX, const std::size_t endX)
+                        {
+                            calculateRange(startX, endX);
+                        });
+
                     for (std::size_t xi = ghostCellOffset; xi <= mesh.nx; ++xi)
                     {
                         for (std::size_t yi = ghostCellOffset; yi <= mesh.ny; ++yi)
-                        {
-                            T.grid[xi][yi] = Tprevious[xi][yi] + alfa * dt * laplacian(xi, yi);
                             maxResidual = std::max(maxResidual, std::abs(T.grid[xi][yi] - Tprevious[xi][yi]));
-                        }
                     }
 
                     if (simulationProperties.shouldExportResults && finalResultPath.empty() && timestep % simulationProperties.exportFrequency == 0)

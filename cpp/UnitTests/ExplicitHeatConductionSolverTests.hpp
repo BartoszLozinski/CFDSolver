@@ -10,7 +10,7 @@
 #include <filesystem>
 #include <fstream>
 
-TEST(HeatConductionSolverTests, ConvergesToLinearOneDimensionalTemperatureProfile)
+TEST(ExplicitHeatConductionSolverTests, ConvergesToLinearOneDimensionalTemperatureProfile)
 {
 	const std::filesystem::path resultPath{"Results/T/TestResult.csv"};
 	std::filesystem::remove(resultPath);

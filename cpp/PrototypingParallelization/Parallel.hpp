@@ -26,6 +26,7 @@ private:
     std::condition_variable workAvailable;
     std::condition_variable workFinished;
     RowTask currentTask;
+    bool stopping{};
 
 public:
     explicit RowWorkerPool(const std::size_t workerCount);

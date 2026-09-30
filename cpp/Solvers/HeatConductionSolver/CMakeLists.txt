@@ -24,6 +24,7 @@ target_link_libraries(${target_name}
         Mesh
         BoundaryCondition
         ResultsExporter
+        PrototypingParallelization
     INTERFACE
         Properties
 )
